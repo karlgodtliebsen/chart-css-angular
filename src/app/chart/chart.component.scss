@@ -1,0 +1,104 @@
+@import "./../../../node_modules/charts.css/dist/charts.css";
+
+
+:root{
+  --legend-background-color: rgba(0, 0, 255, 0.9);
+  --background-color: rgba(255, 0, 255, 0.9);
+
+  --color-1: rgba(230, 30, 30, 0.2);
+  --color-2: rgba(230, 30, 30, 0.4);
+  --color-3: rgba(230, 30, 30, 0.5);
+  --color-4: rgba(230, 30, 30, 0.6);
+  --color-5: rgba(230, 30, 30, 1.0);
+  --color-6: rgba(230, 30, 30, 1.0);
+  --color-7: rgba(230, 30, 30, 0.8);
+  --color-8: rgba(230, 30, 30, 0.6);
+  --color-9: rgba(230, 30, 30, 0.4);
+  --color-10: rgba(230, 30, 30, 0.2);
+}
+
+$legend-height: 50px;
+$chart-height: 400px;
+$chart-width: 700px;
+
+$chart-wrapper-max-width: 800px;
+$chart-wrapper-max-height: 800px;
+$chart-wrapper-height: $chart-height + $legend-height;
+$chart-wrapper-width: $chart-width;
+
+
+$chart-max-width: $chart-wrapper-max-width - 20px;
+$chart-max-height: $chart-wrapper-max-height - 20px;
+
+.chart-wrapper {
+  height: $chart-wrapper-height;
+  width: $chart-wrapper-width;
+  max-height: $chart-wrapper-max-height;
+  max-width: $chart-wrapper-max-width;
+
+  margin: 0 auto;
+
+  border-radius: 10px;
+  border-color: black;
+  border-width: 2px;
+  border-style: solid;
+  background-color: var(--background-color);
+  padding: 5px;
+
+//  --color: blue;
+}
+
+.chart-wrapper .chart  {
+  height: $chart-height;
+  max-width: $chart-max-width;
+
+  margin: 0 auto;
+//  --color: linear-gradient(red, yellow);
+}
+
+.chart-wrapper .legend {
+  display: flex;
+  height: $legend-height;
+  max-width: $chart-max-width;
+  // margin: 10px auto;
+  background-color: var(--legend-background-color);
+  align-content: center;
+  -webkit-align-content: center;
+  :first-line{
+    flex: auto;
+    margin: auto;
+  };
+}
+
+
+
+/*
+
+#my-chart caption {
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.25rem;
+}
+
+@media (min-width: 600px) {
+  #my-chart .bar {
+    height: 400px;
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 1000px) {
+  #my-chart .bar {
+    height: 500px;
+    max-width: 1000px;
+  }
+}
+
+#my-chart .bar {
+//  background-image: url(path/to/your/logo.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100px 100px;
+}
+
+*/

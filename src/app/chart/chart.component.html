@@ -1,0 +1,83 @@
+<div id="{{chartId}}" class="chart-wrapper" *ngIf="chartData.datasets">
+  <ul class="charts-css legend" [ngClass]="legendClasses" [class.legend-inline]="legendInline">
+    <li *ngFor="let legend of chartData.legends" [style.color]="legend.color">{{legend.text}}</li>
+  </ul>
+
+  <table class="charts-css chart " [ngClass]="tableClasses"
+         [class.show-heading]="caption"
+         [class.show-data]="showData"
+         [class.show-data-on-hover]="showDataOnHover"
+         [class.show-data-axes]="showDataAxis"
+         [class.show-primary-axis]="showPrimaryAxis"
+         [class.show-labels]="showLabels"
+         [class.show-multiple]="multiple"
+         [class.show-stacked]="stacked"
+
+  >
+    <caption [ngClass]="captionStyle"> {{caption}} </caption>
+    <thead>
+    <!--
+        <tr>
+          <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
+        </tr>
+        -->
+    </thead>
+
+    <tbody *ngIf="multiple">
+    <tr *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
+
+      <th *ngIf="chartData.labels && chartData.labels.length>dataSetIndex"
+          scope="row">{{chartData.labels[dataSetIndex]}}</th>
+
+      <td *ngFor="let row of dataset.rows; let r = index"
+          [style.color]="row.datacolor"
+          [style.--size]="getSize( row )"
+          [style.--color]="getColor(row, dataSetIndex)"
+          [style.--start]="getStart( row )">
+        <span *ngIf="row.data" class="data">{{row.data}} </span>
+        <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
+      </td>
+    </tr>
+    </tbody>
+
+    <tbody *ngIf="!multiple">
+    <ng-container *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
+      <tr *ngFor="let row of dataset.rows; let r = index">
+      <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex" scope="row"> {{chartData.labels[r]}} </th>
+      <td
+          [style.color]="row.datacolor"
+          [style.--size]="getSize( row )"
+          [style.--color]="getColor(row, dataSetIndex)"
+          [style.--start]="getStart( row )">
+          <span *ngIf="row.data" class="data">{{row.data}} </span>
+          <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
+        </td>
+      </tr>
+    </ng-container>
+    </tbody>
+
+    <!--
+
+     [style.--color]="getColor(row, r)"
+      <tbody  *ngIf="!multiple">
+
+      <tr *ngFor="let dataset of chartData.datasets; let i = index">
+        <td [style.color]="row.datacolor" [style.--color]="getColor(row, i)" [style.--size]="getSize( row )"
+            [style.--start]="getStart( row )">
+          <span *ngIf="row.data" class="data">{{row.value}} {{row.data}} </span>
+          <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
+        </td>
+      </tr>
+      </tbody>
+      <tbody >
+      <tr *ngFor="let row of dataset.rows; let i = index ">
+        <td [style.color]="row.datacolor" [style.--color]="getColor(row, i)" [style.--size]="getSize( row )"
+            [style.--start]="getStart( row )">
+          <span *ngIf="row.data" class="data">{{row.value}} {{row.data}} </span>
+          <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
+        </td>
+      </tr>
+      </tbody>
+      -->
+  </table>
+</div>
