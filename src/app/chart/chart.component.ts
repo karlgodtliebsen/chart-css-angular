@@ -4,7 +4,7 @@ import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 export type ChartType = 'bar' | 'column' | 'area' | 'pie' | 'donut' | 'polar' | 'radar' | 'mixed' | 'line';
 export type ChartOrientation = '' | 'reverse';
 export type LegendShape = 'legend-circle' | 'legend-ellipse' | 'legend-square' | 'legend-rectangle' | 'legend-rhombus' | 'legend-line';
-export type LabelAlignment = 'labels-align-start' | 'labels-align-center' | 'labels-align-end' ;
+export type LabelAlignment = 'labels-align-start' | 'labels-align-center' | 'labels-align-end';
 
 export interface ChartData {
   max?: number;
@@ -17,8 +17,10 @@ export interface ChartData {
 
 export interface Row {
   datacolor?: string;
+  useDefaultColor?: boolean;
   color?: string;
   value: number;
+  start?: number;
   data?: string;
   tooltip?: string;
 }
@@ -62,24 +64,27 @@ export class ChartComponent implements OnInit {
   @Input() showDataOnHover = true;
   @Input() legendInline = true;
   @Input() legendShape: LegendShape = 'legend-circle';
-  @Input() labelAlignment: LabelAlignment = 'labels-align-center';
 
   @Input() orientation: ChartOrientation;
+
+  @Input() labelAlignment: LabelAlignment = 'labels-align-center';
   @Input() showLabels = true;
+  @Input() hideLabelsNth = -1;
+
   @Input() showPrimaryAxis = true;
   @Input() showDataAxis = true;
   @Input() stacked = false;
   @Input() multiple = false;
-
+  @Input() start = 0;
   @Input() nbSecondaryAxis = 0;
-  @Input() dataSpacing = 20;
+  @Input() dataSpacing = 10;
   @Input() dataSetsSpacing = 0;
   // data
   @Input() chartData: ChartData;
   @Input() max: number = null;
 
   constructor() {
-    this.type = 'line';
+    this.type = 'column';
     this.chartData = {
       max: null,
       legends: [],
@@ -98,7 +103,9 @@ export class ChartComponent implements OnInit {
     if (Boolean(this.labelAlignment)) {
       c.push(this.labelAlignment);
     }
-
+    if (Boolean(this.multiple)) {
+      c.push(`multiple`);
+    }
     if (Boolean(this.dataSpacing)) {
       c.push(`data-spacing-${this.dataSpacing}`);
     }
@@ -133,14 +140,35 @@ export class ChartComponent implements OnInit {
 
   convertRows(dataRows: any[]): Row[] {
     const rows: Row[] = [];
-    dataRows.forEach((r) => rows.push({value: r, data: r.toString()}));
+    if (dataRows.length === 0) { return rows; }
+    dataRows.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false}));
+
+    rows[0].start = this.start;
+    let previous =  rows[0].value;
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 1; i  < rows.length; i++){
+      rows[i].start = previous;
+      previous = rows[i].value;
+    }
+
     return rows;
   }
 
   convertLabels(labelSet: any[]): Label[] {
     const labels: Label[] = [];
-    labelSet.forEach((l) => labels.push(
-      {text: l, hide: false, class: null}));
+    let index = 0;
+    const hideLabelN = parseInt(this.hideLabelsNth.toString(), 10);
+    labelSet.forEach((l) => {
+      let hideThisLabel = false;
+      if (hideLabelN > -1) {
+        if (hideLabelN === index) {
+          index = 0;
+          hideThisLabel = true;
+        }
+      }
+      labels.push({text: l, hide: hideThisLabel, class: null});
+      index++;
+    });
     return labels;
   }
 
@@ -149,7 +177,6 @@ export class ChartComponent implements OnInit {
     if (this.chartData.labels && this.chartData.labels.length > 0) {
       if (typeof this.chartData.labels[0] === 'string') {
         this.chartData.labels = this.convertLabels(this.chartData.labels);
-        console.log('labels', this.chartData.labels);
       }
     }
 
@@ -179,7 +206,6 @@ export class ChartComponent implements OnInit {
           this.max = this.chartData.max;
         }
       }
-      console.log(this.max);
     }
     this.multiple = this.chartData.datasets.length > 1;
   }
@@ -188,9 +214,11 @@ export class ChartComponent implements OnInit {
     return row.value / this.max;
   }
 
-  // TODO: handle start
-  getStart(row: Row): string {
-    return '0.0';
+  getStart(row: Row): number {
+    if (row.start){
+      return row.start / this.max;
+    }
+    return undefined;
   }
 
   getColor(row: Row, index: number): string {
@@ -200,6 +228,9 @@ export class ChartComponent implements OnInit {
     if (this.chartData.colors && this.chartData.colors.length > index) {
       return this.chartData.colors[index];
     }
-    return `var(--color-${index})`;
+    if (row.useDefaultColor) {
+      return `var(--color-${index})`;
+    }
+    return undefined;
   }
 }

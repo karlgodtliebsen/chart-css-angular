@@ -3,16 +3,14 @@
     <li *ngFor="let legend of chartData.legends" [style.color]="legend.color">{{legend.text}}</li>
   </ul>
 
-  <table  id="{{chartId}}-chart" class="charts-css chart " [ngClass]="tableClasses"
+  <table  id="{{chartId}}" class="charts-css chart " [ngClass]="tableClasses"
          [class.show-heading]="caption"
          [class.show-data]="showData"
          [class.show-data-on-hover]="showDataOnHover"
          [class.show-data-axes]="showDataAxis"
          [class.show-primary-axis]="showPrimaryAxis"
          [class.show-labels]="showLabels"
-         [class.show-multiple]="multiple"
          [class.show-stacked]="stacked"
-
   >
     <caption [ngClass]="captionStyle"> {{caption}} </caption>
     <thead>
@@ -28,6 +26,10 @@
           scope="row" [class.hide-label]="chartData.labels[dataSetIndex].hide">
         {{chartData.labels[dataSetIndex].text}}
         <div *ngIf="chartData.labels[dataSetIndex].class" [class]="chartData.labels[dataSetIndex].class"></div>
+      </th>
+
+      <th *ngIf="dataset.header"
+          scope="row" > {{dataset.header}}
       </th>
 
       <td *ngFor="let row of dataset.rows; let r = index"
@@ -49,7 +51,10 @@
         {{chartData.labels[r].text}}
         <div *ngIf="chartData.labels[r].class" [class]="chartData.labels[r].class"></div>
        </th>
-      <td
+        <th *ngIf="dataset.header"
+            scope="row" > {{dataset.header}}
+        </th>
+        <td
           [style.color]="row.datacolor"
           [style.--size]="getSize( row )"
           [style.--color]="getColor(row, dataSetIndex)"

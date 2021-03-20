@@ -63,8 +63,8 @@ export class Line1Component implements OnInit {
   ];
 
   chartData: ChartData = {
-    legends: [{text: 'Monthly Expenses', color: 'cyan'}],
-    colors: ['cyan'],
+    legends: [{text: 'Monthly Expenses', /* color: 'rgb(128,255,128,0.5)'*/}],
+    // colors: ['rgb(128,255,128,0.5)'],
     labels: this.labels,
     datasets: [
       {

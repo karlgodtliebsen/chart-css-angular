@@ -1,23 +1,21 @@
 :root{
   --legend-background-color: red;
-
 }
 
 .charts-css{
-
-  background-color: red;
+//  background-color: red;
 }
 
-#labels-example-4-chart{
+#labels-example-4{
 
 }
-#labels-example-4-chart.column {
+#labels-example-4.column {
   height: 250px;
   max-width: 500px;
   margin: 0 auto;
   --labels-size: 4rem;
 }
-#labels-example-4-chart.column th {
+#labels-example-4.column th {
   background-color: #f6f6f6;
 }
 
