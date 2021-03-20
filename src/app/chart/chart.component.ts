@@ -1,4 +1,5 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit, Output, ViewEncapsulation} from '@angular/core';
+import {ChartBase} from './chart-base';
 
 
 export type ChartType = 'bar' | 'column' | 'area' | 'pie' | 'donut' | 'polar' | 'radar' | 'mixed' | 'line';
@@ -49,7 +50,7 @@ export interface ChartDataSet {
   styleUrls: ['./chart.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent extends ChartBase implements OnInit {
   @Input()
   type: ChartType;
 
@@ -79,13 +80,14 @@ export class ChartComponent implements OnInit {
   @Input() nbSecondaryAxis = 0;
   @Input() dataSpacing = 10;
   @Input() dataSetsSpacing = 0;
-
-  // data
-  @Input() chartData: ChartData;
   @Input() max: number = null;
   @Input() start = 0.0;
 
+  @Input()  chartData: ChartData;
+  @Input()  overlay = false;
+
   constructor() {
+    super();
     this.type = 'column';
     this.multiple = false;
     this.chartData = {
@@ -129,31 +131,11 @@ export class ChartComponent implements OnInit {
     return c.join(' ');
   }
 
-  getSize(row: Row): number {
-    return row.value / this.max;
-  }
-
-  getStart(row: Row): number {
-    if (row.start) {
-      return row.start / this.max;
-    }
-    return undefined;
-  }
-
-  getColor(row: Row, index: number): string {
-    if (Boolean(row.color)) {
-      return row.color;
-    }
-    if (this.chartData.colors && this.chartData.colors.length > index) {
-      return this.chartData.colors[index];
-    }
-    if (row.useDefaultColor) {
-      return `var(--color-${index})`;
-    }
-    return undefined;
-  }
 
   ngOnInit(): void {
+
+    console.log('ngOnInit', this.chartData);
+
     if (this.type === 'line') {
       this.dataSpacing = 0;
       this.showDataAxis = false;
@@ -234,12 +216,12 @@ export class ChartComponent implements OnInit {
   private adjustRowDataAndFindMax(): void {
     if (this.chartData.datasets && this.chartData.datasets.length > 0) {
       this.chartData.datasets.forEach((dataset) => {
-        if (typeof dataset.label === 'string'){
-          dataset.label = {
-            text: dataset.label,
-          };
-        }
-        if (dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
+          if (typeof dataset.label === 'string') {
+            dataset.label = {
+              text: dataset.label,
+            };
+          }
+          if (dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
             dataset.rows = this.convertRows(dataset.rows);
           }
         }
@@ -247,6 +229,7 @@ export class ChartComponent implements OnInit {
       this.findMax();
     }
   }
+
   private findMax(): void {
     if (this.chartData.datasets.length > 0) {
       if (this.max === null && !this.chartData.max) {

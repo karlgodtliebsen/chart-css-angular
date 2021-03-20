@@ -1,0 +1,28 @@
+import {ChartData, Row} from './chart.component';
+
+export class ChartBase {
+
+  public getSize(row: Row, max: number): number {
+    return row.value / max;
+  }
+
+  public getStart(row: Row, max: number): number {
+    if (row.start) {
+      return row.start / max;
+    }
+    return undefined;
+  }
+
+  public getColor(chartData: ChartData, row: Row, index: number): string {
+    if (Boolean(row.color)) {
+      return row.color;
+    }
+    if (chartData.colors && chartData.colors.length > index) {
+      return chartData.colors[index];
+    }
+    if (row.useDefaultColor) {
+      return `var(--color-${index})`;
+    }
+    return undefined;
+  }
+}
