@@ -2,7 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ChartData} from '../../chart/chart.component';
 
 @Component({
-  selector: 'app-bar3',
+  selector: 'app-bar-3',
   templateUrl: './bar3.component.html',
   styleUrls: ['./bar3.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -15,13 +15,13 @@ export class Bar3Component implements OnInit {
     max: 30,
     headers: ['Day', 'Forecast'],
     labels: [
-      {text: 'Mon', class: 'sun'},
-      {text: 'Tue', class: 'sun'},
-      {text: 'Wed', class: 'sun'},
-      {text: 'Thu', class: 'cloud'},
-      {text: 'Fri', class: 'cloud'},
-      {text: 'Sat', class: 'cloud'},
-      {text: 'Sun', class: 'sun'},
+      {text: 'Mon', subClass: 'sun'},
+      {text: 'Tue', subClass: 'sun'},
+      {text: 'Wed', subClass: 'sun'},
+      {text: 'Thu', subClass: 'cloud'},
+      {text: 'Fri', subClass: 'cloud'},
+      {text: 'Sat', subClass: 'cloud'},
+      {text: 'Sun', subClass: 'sun'},
     ],
     datasets: [
       {

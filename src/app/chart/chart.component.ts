@@ -34,10 +34,11 @@ export interface Label {
   hide?: boolean;
   text: string;
   class?: string;
+  subClass?: string;
 }
 
 export interface ChartDataSet {
-  header?: string;
+  label?: string | Label;
   rows: Row[] | number[];
 }
 
@@ -75,16 +76,18 @@ export class ChartComponent implements OnInit {
   @Input() showDataAxis = true;
   @Input() stacked = false;
   @Input() multiple = false;
-  @Input() start = 0;
   @Input() nbSecondaryAxis = 0;
   @Input() dataSpacing = 10;
   @Input() dataSetsSpacing = 0;
+
   // data
   @Input() chartData: ChartData;
   @Input() max: number = null;
+  @Input() start = 0.0;
 
   constructor() {
     this.type = 'column';
+    this.multiple = false;
     this.chartData = {
       max: null,
       legends: [],
@@ -126,69 +129,126 @@ export class ChartComponent implements OnInit {
     return c.join(' ');
   }
 
-  isRowArray(data: Row[] | number[]): data is Row[] {
-    return (Array.isArray(data)) && (data as Row[]).length !== undefined;
+  getSize(row: Row): number {
+    return row.value / this.max;
   }
 
-  isNumberArray(data: Row[] | number[]): data is number[] {
-    return (Array.isArray(data)) && (data as number[]).length !== undefined;
-  }
-
-  isRowElement(data: Row | number): data is Row {
-    return (data as Row).data !== undefined;
-  }
-
-  convertRows(dataRows: any[]): Row[] {
-    const rows: Row[] = [];
-    if (dataRows.length === 0) { return rows; }
-    dataRows.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false}));
-
-    rows[0].start = this.start;
-    let previous =  rows[0].value;
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 1; i  < rows.length; i++){
-      rows[i].start = previous;
-      previous = rows[i].value;
+  getStart(row: Row): number {
+    if (row.start) {
+      return row.start / this.max;
     }
-
-    return rows;
+    return undefined;
   }
 
-  convertLabels(labelSet: any[]): Label[] {
-    const labels: Label[] = [];
-    let index = 0;
-    const hideLabelN = parseInt(this.hideLabelsNth.toString(), 10);
-    labelSet.forEach((l) => {
-      let hideThisLabel = false;
-      if (hideLabelN > -1) {
-        if (hideLabelN === index) {
-          index = 0;
-          hideThisLabel = true;
-        }
-      }
-      labels.push({text: l, hide: hideThisLabel, class: null});
-      index++;
-    });
-    return labels;
+  getColor(row: Row, index: number): string {
+    if (Boolean(row.color)) {
+      return row.color;
+    }
+    if (this.chartData.colors && this.chartData.colors.length > index) {
+      return this.chartData.colors[index];
+    }
+    if (row.useDefaultColor) {
+      return `var(--color-${index})`;
+    }
+    return undefined;
   }
 
   ngOnInit(): void {
+    if (this.type === 'line') {
+      this.dataSpacing = 0;
+      this.showDataAxis = false;
+    }
 
+    if (this.type === 'area') {
+      this.dataSpacing = 0;
+      this.showDataAxis = false;
+    }
+
+    this.adjustLabels();
+    this.adjustRowDataAndFindMax();
+    if (this.chartData.datasets && this.chartData.datasets.length > 1) {
+      this.multiple = true;
+    }
+  }
+
+  private adjustLabels(): void {
     if (this.chartData.labels && this.chartData.labels.length > 0) {
       if (typeof this.chartData.labels[0] === 'string') {
         this.chartData.labels = this.convertLabels(this.chartData.labels);
       }
     }
+  }
 
-    if (this.chartData.datasets.length > 0) {
-      // TODO: check array type
+  private isRowArray(data: Row[] | number[]): data is Row[] {
+    return (Array.isArray(data)) && (data as Row[]).length !== undefined;
+  }
+
+  private isNumberArray(data: Row[] | number[]): data is number[] {
+    return (Array.isArray(data)) && (data as number[]).length !== undefined;
+  }
+
+  private isRowElement(data: Row | number): data is Row {
+    return (data as Row).data !== undefined;
+  }
+
+  private convertRows(dataRows: any[]): Row[] {
+    let rows: Row[] = [];
+    if (dataRows.length === 0) {
+      return rows;
+    }
+    dataRows.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false}));
+    rows = this.setStartPositions(rows);
+    return rows;
+  }
+
+  private setStartPositions(rows: Row[]): Row[] {
+    if (rows.length === 0) {
+      return rows;
+    }
+    rows[0].start = this.start;
+    let previous = rows[0].value;
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 1; i < rows.length; i++) {
+      rows[i].start = previous;
+      previous = rows[i].value;
+    }
+    return rows;
+  }
+
+  private convertLabels(labelSet: any[]): Label[] {
+    const labels: Label[] = [];
+    labelSet.forEach((l) => labels.push({text: l, hide: false, class: null, subClass: null}));
+    const hideLabelN = parseInt(this.hideLabelsNth.toString(), 10);
+    if (hideLabelN > -1) {
+      let index = -1;
+      labels.forEach((l) => {
+        if (index % hideLabelN === 0) {
+          l.hide = true;
+        }
+        index++;
+      });
+    }
+    return labels;
+  }
+
+  private adjustRowDataAndFindMax(): void {
+    if (this.chartData.datasets && this.chartData.datasets.length > 0) {
       this.chartData.datasets.forEach((dataset) => {
-          if (dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
+        if (typeof dataset.label === 'string'){
+          dataset.label = {
+            text: dataset.label,
+          };
+        }
+        if (dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
             dataset.rows = this.convertRows(dataset.rows);
           }
         }
       );
-
+      this.findMax();
+    }
+  }
+  private findMax(): void {
+    if (this.chartData.datasets.length > 0) {
       if (this.max === null && !this.chartData.max) {
         let m = Number.MIN_SAFE_INTEGER;
         this.chartData.datasets.forEach((dataset) => {
@@ -207,30 +267,5 @@ export class ChartComponent implements OnInit {
         }
       }
     }
-    this.multiple = this.chartData.datasets.length > 1;
-  }
-
-  getSize(row: Row): number {
-    return row.value / this.max;
-  }
-
-  getStart(row: Row): number {
-    if (row.start){
-      return row.start / this.max;
-    }
-    return undefined;
-  }
-
-  getColor(row: Row, index: number): string {
-    if (Boolean(row.color)) {
-      return row.color;
-    }
-    if (this.chartData.colors && this.chartData.colors.length > index) {
-      return this.chartData.colors[index];
-    }
-    if (row.useDefaultColor) {
-      return `var(--color-${index})`;
-    }
-    return undefined;
   }
 }

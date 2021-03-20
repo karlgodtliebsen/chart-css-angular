@@ -2,7 +2,7 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ChartData} from '../../chart/chart.component';
 
 @Component({
-  selector: 'app-bar2',
+  selector: 'app-bar-2',
   templateUrl: './bar2.component.html',
   styleUrls: ['./bar2.component.scss'],
   encapsulation: ViewEncapsulation.None,

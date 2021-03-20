@@ -2,13 +2,14 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ChartData} from '../../chart/chart.component';
 
 @Component({
-  selector: 'app-line-1',
-  templateUrl: './line1.component.html',
-  styleUrls: ['./line1.component.scss'],
+  selector: 'app-area-1',
+  templateUrl: './area1.component.html',
+  styleUrls: ['./area1.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class Line1Component implements OnInit {
+export class Area1Component implements OnInit {
 
+  constructor() { }
   labels: string[] = [
     'January 2010',
     'February 2010',
@@ -63,17 +64,13 @@ export class Line1Component implements OnInit {
   ];
 
   chartData: ChartData = {
-    legends: [{text: 'Monthly Expenses', /* color: 'rgb(128,255,128,0.5)'*/}],
-    // colors: ['rgb(128,255,128,0.5)'],
+    legends: [{text: 'Monthly Expenses', }],
     labels: this.labels,
     datasets: [
       {
         rows: this.data
       }]
   };
-
-  constructor() {
-  }
 
   ngOnInit(): void {
   }

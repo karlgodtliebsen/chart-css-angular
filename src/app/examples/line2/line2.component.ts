@@ -2,13 +2,14 @@ import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ChartData} from '../../chart/chart.component';
 
 @Component({
-  selector: 'app-line-1',
-  templateUrl: './line1.component.html',
-  styleUrls: ['./line1.component.scss'],
+  selector: 'app-line-2',
+  templateUrl: './line2.component.html',
+  styleUrls: ['./line2.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class Line1Component implements OnInit {
+export class Line2Component implements OnInit {
 
+  constructor() { }
   labels: string[] = [
     'January 2010',
     'February 2010',
@@ -35,7 +36,33 @@ export class Line1Component implements OnInit {
     'May 2013',
     'June 2013',
   ];
-  data: number[] = [
+  data1: number[] = [
+    1940.1,
+    1950.6,
+    1700.4,
+    1600.9,
+    1710.5,
+    1060.4,
+    1290.2,
+    1440.0,
+    1460.0,
+    1350.6,
+    1480.5,
+    1800.4,
+    1600.9,
+    1710.5,
+    1060.4,
+    1290.2,
+    1440.0,
+    1460.0,
+    1350.6,
+    1480.5,
+    1800.4,
+    1940.1,
+    1950.6,
+    1700.4,
+  ];
+  data2: number[] = [
     1940.1,
     1950.6,
     1700.4,
@@ -63,17 +90,19 @@ export class Line1Component implements OnInit {
   ];
 
   chartData: ChartData = {
-    legends: [{text: 'Monthly Expenses', /* color: 'rgb(128,255,128,0.5)'*/}],
-    // colors: ['rgb(128,255,128,0.5)'],
+    legends: [{text: 'Monthly Expenses',}],
     labels: this.labels,
     datasets: [
       {
-        rows: this.data
-      }]
+        rows: this.data1
+      },
+ /*     {
+        rows: this.data2
+      }
+*/
+      ]
   };
 
-  constructor() {
-  }
 
   ngOnInit(): void {
   }

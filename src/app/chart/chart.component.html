@@ -23,13 +23,13 @@
     <tr *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
 
       <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
-          scope="row" [class.hide-label]="chartData.labels[dataSetIndex].hide">
+          scope="row" [class.hide-label]="chartData.labels[dataSetIndex].hide" [ngClass]="chartData.labels[dataSetIndex].class">
         {{chartData.labels[dataSetIndex].text}}
-        <div *ngIf="chartData.labels[dataSetIndex].class" [class]="chartData.labels[dataSetIndex].class"></div>
+        <div *ngIf="chartData.labels[dataSetIndex].subClass" [class]="chartData.labels[dataSetIndex].subClass"></div>
       </th>
 
-      <th *ngIf="dataset.header"
-          scope="row" > {{dataset.header}}
+      <th *ngIf="dataset.label"
+          scope="row" [ngClass]="dataset.label.class"> {{dataset.label.text}}
       </th>
 
       <td *ngFor="let row of dataset.rows; let r = index"
@@ -47,12 +47,12 @@
     <ng-container *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
       <tr *ngFor="let row of dataset.rows; let r = index">
       <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
-          scope="row" [class.hide-label]="chartData.labels[r].hide">
+          scope="row" [class.hide-label]="chartData.labels[r].hide" [ngClass]="chartData.labels[r].class">
         {{chartData.labels[r].text}}
-        <div *ngIf="chartData.labels[r].class" [class]="chartData.labels[r].class"></div>
+        <div *ngIf="chartData.labels[r].subClass" [ngClass]="chartData.labels[r].subClass"></div>
        </th>
-        <th *ngIf="dataset.header"
-            scope="row" > {{dataset.header}}
+        <th *ngIf="dataset.label"
+            scope="row" [ngClass]="dataset.label.class"> {{dataset.label.text}}
         </th>
         <td
           [style.color]="row.datacolor"
