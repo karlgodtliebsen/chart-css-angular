@@ -1,9 +1,9 @@
-<div id="{{chartId}}" class="chart-wrapper" *ngIf="chartData.datasets">
-  <ul class="charts-css legend" [ngClass]="legendClasses" [class.legend-inline]="legendInline">
+<div id="{{chartId}}-container" class="chart-wrapper" *ngIf="chartData.datasets">
+  <ul  *ngIf="chartData.legends" class="charts-css legend" [ngClass]="legendClasses" [class.legend-inline]="legendInline">
     <li *ngFor="let legend of chartData.legends" [style.color]="legend.color">{{legend.text}}</li>
   </ul>
 
-  <table class="charts-css chart " [ngClass]="tableClasses"
+  <table  id="{{chartId}}-chart" class="charts-css chart " [ngClass]="tableClasses"
          [class.show-heading]="caption"
          [class.show-data]="showData"
          [class.show-data-on-hover]="showDataOnHover"
@@ -16,18 +16,19 @@
   >
     <caption [ngClass]="captionStyle"> {{caption}} </caption>
     <thead>
-    <!--
         <tr>
           <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
         </tr>
-        -->
     </thead>
 
     <tbody *ngIf="multiple">
     <tr *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
 
-      <th *ngIf="chartData.labels && chartData.labels.length>dataSetIndex"
-          scope="row">{{chartData.labels[dataSetIndex]}}</th>
+      <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
+          scope="row" [class.hide-label]="chartData.labels[dataSetIndex].hide">
+        {{chartData.labels[dataSetIndex].text}}
+        <div *ngIf="chartData.labels[dataSetIndex].class" [class]="chartData.labels[dataSetIndex].class"></div>
+      </th>
 
       <td *ngFor="let row of dataset.rows; let r = index"
           [style.color]="row.datacolor"
@@ -43,7 +44,11 @@
     <tbody *ngIf="!multiple">
     <ng-container *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
       <tr *ngFor="let row of dataset.rows; let r = index">
-      <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex" scope="row"> {{chartData.labels[r]}} </th>
+      <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
+          scope="row" [class.hide-label]="chartData.labels[r].hide">
+        {{chartData.labels[r].text}}
+        <div *ngIf="chartData.labels[r].class" [class]="chartData.labels[r].class"></div>
+       </th>
       <td
           [style.color]="row.datacolor"
           [style.--size]="getSize( row )"
@@ -55,29 +60,5 @@
       </tr>
     </ng-container>
     </tbody>
-
-    <!--
-
-     [style.--color]="getColor(row, r)"
-      <tbody  *ngIf="!multiple">
-
-      <tr *ngFor="let dataset of chartData.datasets; let i = index">
-        <td [style.color]="row.datacolor" [style.--color]="getColor(row, i)" [style.--size]="getSize( row )"
-            [style.--start]="getStart( row )">
-          <span *ngIf="row.data" class="data">{{row.value}} {{row.data}} </span>
-          <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
-        </td>
-      </tr>
-      </tbody>
-      <tbody >
-      <tr *ngFor="let row of dataset.rows; let i = index ">
-        <td [style.color]="row.datacolor" [style.--color]="getColor(row, i)" [style.--size]="getSize( row )"
-            [style.--start]="getStart( row )">
-          <span *ngIf="row.data" class="data">{{row.value}} {{row.data}} </span>
-          <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
-        </td>
-      </tr>
-      </tbody>
-      -->
   </table>
 </div>

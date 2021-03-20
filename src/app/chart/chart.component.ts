@@ -1,15 +1,18 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 
 
 export type ChartType = 'bar' | 'column' | 'area' | 'pie' | 'donut' | 'polar' | 'radar' | 'mixed' | 'line';
 export type ChartOrientation = '' | 'reverse';
 export type LegendShape = 'legend-circle' | 'legend-ellipse' | 'legend-square' | 'legend-rectangle' | 'legend-rhombus' | 'legend-line';
+export type LabelAlignment = 'labels-align-start' | 'labels-align-center' | 'labels-align-end' ;
 
 export interface ChartData {
+  max?: number;
   colors?: string[];
-  labels?: string[];
+  labels?: string[] | Label[];
   legends?: Legend[];
   datasets?: ChartDataSet[];
+  headers?: string[];
 }
 
 export interface Row {
@@ -25,17 +28,23 @@ export interface Legend {
   text: string;
 }
 
-export interface ChartDataSet {
-  rows: Row[] | number[];
-  headers?: string[];
+export interface Label {
+  hide?: boolean;
+  text: string;
+  class?: string;
+}
 
+export interface ChartDataSet {
+  header?: string;
+  rows: Row[] | number[];
 }
 
 
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.scss']
+  styleUrls: ['./chart.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ChartComponent implements OnInit {
   @Input()
@@ -53,6 +62,7 @@ export class ChartComponent implements OnInit {
   @Input() showDataOnHover = true;
   @Input() legendInline = true;
   @Input() legendShape: LegendShape = 'legend-circle';
+  @Input() labelAlignment: LabelAlignment = 'labels-align-center';
 
   @Input() orientation: ChartOrientation;
   @Input() showLabels = true;
@@ -66,12 +76,12 @@ export class ChartComponent implements OnInit {
   @Input() dataSetsSpacing = 0;
   // data
   @Input() chartData: ChartData;
-  private max: number;
+  @Input() max: number = null;
 
   constructor() {
     this.type = 'line';
-    this.max = 1;
     this.chartData = {
+      max: null,
       legends: [],
       datasets: [],
     };
@@ -85,6 +95,10 @@ export class ChartComponent implements OnInit {
     if (Boolean(this.orientation)) {
       c.push(this.orientation);
     }
+    if (Boolean(this.labelAlignment)) {
+      c.push(this.labelAlignment);
+    }
+
     if (Boolean(this.dataSpacing)) {
       c.push(`data-spacing-${this.dataSpacing}`);
     }
@@ -116,34 +130,56 @@ export class ChartComponent implements OnInit {
   isRowElement(data: Row | number): data is Row {
     return (data as Row).data !== undefined;
   }
-  convert(dataRows: any[]): Row[] {
+
+  convertRows(dataRows: any[]): Row[] {
     const rows: Row[] = [];
     dataRows.forEach((r) => rows.push({value: r, data: r.toString()}));
     return rows;
   }
 
+  convertLabels(labelSet: any[]): Label[] {
+    const labels: Label[] = [];
+    labelSet.forEach((l) => labels.push(
+      {text: l, hide: false, class: null}));
+    return labels;
+  }
+
   ngOnInit(): void {
+
+    if (this.chartData.labels && this.chartData.labels.length > 0) {
+      if (typeof this.chartData.labels[0] === 'string') {
+        this.chartData.labels = this.convertLabels(this.chartData.labels);
+        console.log('labels', this.chartData.labels);
+      }
+    }
+
     if (this.chartData.datasets.length > 0) {
       // TODO: check array type
       this.chartData.datasets.forEach((dataset) => {
           if (dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
-            dataset.rows = this.convert( dataset.rows);
+            dataset.rows = this.convertRows(dataset.rows);
           }
         }
       );
 
-      let m = Number.MIN_SAFE_INTEGER;
-      this.chartData.datasets.forEach((dataset) => {
-          dataset.rows.forEach((r) => {
-            const a: any = r;
-            if (m < a.value) {
-              m = a.value;
-            }
-          });
+      if (this.max === null && !this.chartData.max) {
+        let m = Number.MIN_SAFE_INTEGER;
+        this.chartData.datasets.forEach((dataset) => {
+            dataset.rows.forEach((r) => {
+              const a: any = r;
+              if (m < a.value) {
+                m = a.value;
+              }
+            });
+          }
+        );
+        this.max = m;
+      } else {
+        if (this.chartData.max) {
+          this.max = this.chartData.max;
         }
-      );
-      this.max = m;
-      console.log(m);
+      }
+      console.log(this.max);
     }
     this.multiple = this.chartData.datasets.length > 1;
   }
@@ -152,8 +188,9 @@ export class ChartComponent implements OnInit {
     return row.value / this.max;
   }
 
+  // TODO: handle start
   getStart(row: Row): string {
-    return '0.2';
+    return '0.0';
   }
 
   getColor(row: Row, index: number): string {

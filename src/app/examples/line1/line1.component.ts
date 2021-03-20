@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ChartData} from '../../chart/chart.component';
 
 @Component({
   selector: 'app-line1',
   templateUrl: './line1.component.html',
-  styleUrls: ['./line1.component.scss']
+  styleUrls: ['./line1.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class Line1Component implements OnInit {
 

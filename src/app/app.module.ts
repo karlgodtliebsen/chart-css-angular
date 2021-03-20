@@ -13,6 +13,8 @@ import { Bar1Component } from './examples/bar1/bar1.component';
 import { Line1Component } from './examples/line1/line1.component';
 import { Bar2Component } from './examples/bar2/bar2.component';
 import { Line3Component } from './examples/line3/line3.component';
+import { Bar3Component } from './examples/bar3/bar3.component';
+import { Bar4Component } from './examples/bar4/bar4.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { Line3Component } from './examples/line3/line3.component';
     Bar1Component,
     Line1Component,
     Bar2Component,
-    Line3Component
+    Line3Component,
+    Bar3Component,
+    Bar4Component
   ],
   imports: [
     BrowserModule
