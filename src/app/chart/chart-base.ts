@@ -1,4 +1,4 @@
-import {ChartData, Row} from './chart.component';
+import {ChartData, Row} from './models';
 
 export class ChartBase {
 

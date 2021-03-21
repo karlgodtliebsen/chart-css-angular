@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {ChartData} from '../../chart/chart.component';
+import {ChartData} from '../../chart/models';
 
 @Component({
   selector: 'app-bar-5',
