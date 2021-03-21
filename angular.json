@@ -3,16 +3,9 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-chartcss": {
+    "angular-chart-css-demo": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -20,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/angular-chartcss",
+            "outputPath": "dist/angular-chart-css-demo",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -31,8 +24,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "./node_modules/charts.css/dist/charts.css"
+              "src/styles.css"
             ],
             "scripts": []
           },
@@ -69,18 +61,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-chartcss:build"
+            "browserTarget": "angular-chart-css-demo:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "angular-chartcss:build:production"
+              "browserTarget": "angular-chart-css-demo:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-chartcss:build"
+            "browserTarget": "angular-chart-css-demo:build"
           }
         },
         "test": {
@@ -95,8 +87,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "./node_modules/charts.css/dist/charts.css"
+              "src/styles.css"
             ],
             "scripts": []
           }
@@ -118,19 +109,179 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "angular-chartcss:serve"
+            "devServerTarget": "angular-chart-css-demo:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "angular-chartcss:serve:production"
+              "devServerTarget": "angular-chart-css-demo:serve:production"
+            }
+          }
+        }
+      }
+    },
+    "angular-chart-css": {
+      "projectType": "library",
+      "root": "projects/angular-chart-css",
+      "sourceRoot": "projects/angular-chart-css/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/angular-chart-css/tsconfig.lib.json",
+            "project": "projects/angular-chart-css/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/angular-chart-css/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/angular-chart-css/src/test.ts",
+            "tsConfig": "projects/angular-chart-css/tsconfig.spec.json",
+            "karmaConfig": "projects/angular-chart-css/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/angular-chart-css/tsconfig.lib.json",
+              "projects/angular-chart-css/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "angular-chart-css-samples": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/angular-chart-css-samples",
+      "sourceRoot": "projects/angular-chart-css-samples/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/angular-chart-css-samples",
+            "index": "projects/angular-chart-css-samples/src/index.html",
+            "main": "projects/angular-chart-css-samples/src/main.ts",
+            "polyfills": "projects/angular-chart-css-samples/src/polyfills.ts",
+            "tsConfig": "projects/angular-chart-css-samples/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "projects/angular-chart-css-samples/src/favicon.ico",
+              "projects/angular-chart-css-samples/src/assets"
+            ],
+            "styles": [
+              "projects/angular-chart-css-samples/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/angular-chart-css-samples/src/environments/environment.ts",
+                  "with": "projects/angular-chart-css-samples/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "angular-chart-css-samples:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "angular-chart-css-samples:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "angular-chart-css-samples:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/angular-chart-css-samples/src/test.ts",
+            "polyfills": "projects/angular-chart-css-samples/src/polyfills.ts",
+            "tsConfig": "projects/angular-chart-css-samples/tsconfig.spec.json",
+            "karmaConfig": "projects/angular-chart-css-samples/karma.conf.js",
+            "assets": [
+              "projects/angular-chart-css-samples/src/favicon.ico",
+              "projects/angular-chart-css-samples/src/assets"
+            ],
+            "styles": [
+              "projects/angular-chart-css-samples/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/angular-chart-css-samples/tsconfig.app.json",
+              "projects/angular-chart-css-samples/tsconfig.spec.json",
+              "projects/angular-chart-css-samples/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/angular-chart-css-samples/e2e/protractor.conf.js",
+            "devServerTarget": "angular-chart-css-samples:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "angular-chart-css-samples:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "angular-chartcss",
+  "defaultProject": "angular-chart-css-samples",
   "cli": {
-    "analytics": "eaf8a6ed-cd31-4139-8006-bc89776758c5"
+    "analytics": "28d180d5-e2fd-4ebc-9b08-0a8da3838bc6"
   }
 }
