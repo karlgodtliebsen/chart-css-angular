@@ -8,6 +8,16 @@
     "charts.css": "^0.9.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "charts.css": "^0.9.0"
+  },
+  "devDependencies": {
+    "lint-staged": "^9.4.2",
+    "prettier": "^1.19.1",
+    "stylelint": "^13.12.0",
+    "stylelint-config-prettier": "^6.0.0",
+    "stylelint-prettier": "^1.1.1",
+    "@ngneat/spectator": "^7.1.0",
+    "eslint": "^7.22.0"
   }
 }
