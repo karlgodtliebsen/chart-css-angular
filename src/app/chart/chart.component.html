@@ -94,53 +94,59 @@
 
 </ng-template>
 <ng-template #multipleOverlayDataSetTemplate>
- <!--
   <tbody>
-  <tr *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
-    <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
-        scope="row" [class.hide-label]="chartData.labels[dataSetIndex].hide"
-        [ngClass]="chartData.labels[dataSetIndex].class">
-      {{chartData.labels[dataSetIndex].text}}
-      <div *ngIf="chartData.labels[dataSetIndex].subClass" [class]="chartData.labels[dataSetIndex].subClass"></div>
+  <tr *ngFor="let rowsCollection of getReverseMapped(); let rowIndex = index">
+    <th *ngIf="rowsCollection.label"
+        scope="row" [ngClass]="rowsCollection.label.class"> {{rowsCollection.label.text}}
     </th>
-
-    <th *ngIf="dataset.label"
-        scope="row" [ngClass]="dataset.label.class"> {{dataset.label.text}}
-    </th>
-
-    <td *ngFor="let row of dataset.rows; let r = index"
+    <ng-container *ngFor="let row of rowsCollection.rows; let dataSetIndex = index;">
+      <td
         [style.color]="row.datacolor"
         [style.--size]="getSize( row, max )"
         [style.--color]="getColor(chartData, row, dataSetIndex)"
-        [style.--start]="getStart( row, max )">
-      <span *ngIf="row.data" class="data">{{row.data}} </span>
-      <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
-    </td>
+        [style.--start]="getStart( row, max )"
+      >
+        <span *ngIf="row.data" class="data">{{row.data}} </span>
+        <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
+      </td>
+    </ng-container>
   </tr>
+
   </tbody>
-  -->
-  <tbody>
-<tr>
-  <th scope="row"> 2000</th>
-  <td style="--start:0.1; --size:0.5;"><span class="data"> 50 </span></td>
-  <td style="--start:0; --size:0.2;"><span class="data"> 20 </span></td>
-  <td style="--start:0.2; --size:0.4;"><span class="data"> 40 </span></td>
-</tr>
-<tr>
-  <th scope="row"> 2010</th>
-  <td style="--start:0.5; --size:0.8;"><span class="data"> 80 </span></td>
-  <td style="--start:0.2; --size:0.5;"><span class="data"> 50 </span></td>
-  <td style="--start:0.4; --size:0.1;"><span class="data"> 10 </span></td>
-</tr>
-<tr>
-  <th scope="row"> 2020</th>
-  <td style="--start:0.8; --size:0.4;"><span class="data"> 40 </span></td>
-  <td style="--start:0.5; --size:0.3;"><span class="data"> 30 </span></td>
-  <td style="--start:0.1; --size:0.2;"><span class="data"> 20 </span></td>
-</tr>
-</tbody>
+
 </ng-template>
 
-
-
+<!--
+<table id="line-example-9" class="charts-css line multiple hide-data show-labels reverse">
+  <caption> Line Example #9</caption>
+  <thead>
+  <tr>
+    <th scope="col"> Year</th>
+    <th scope="col"> Progress 1</th>
+    <th scope="col"> Progress 2</th>
+    <th scope="col"> Progress 3</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <th scope="row"> 2000</th>
+    <td style="--start:0.1; --size:0.5;"><span class="data"> 50 </span></td>
+    <td style="--start:0; --size:0.2;"><span class="data"> 20 </span></td>
+    <td style="--start:0.2; --size:0.4;"><span class="data"> 40 </span></td>
+  </tr>
+  <tr>
+    <th scope="row"> 2010</th>
+    <td style="--start:0.5; --size:0.8;"><span class="data"> 80 </span></td>
+    <td style="--start:0.2; --size:0.5;"><span class="data"> 50 </span></td>
+    <td style="--start:0.4; --size:0.1;"><span class="data"> 10 </span></td>
+  </tr>
+  <tr>
+    <th scope="row"> 2020</th>
+    <td style="--start:0.8; --size:0.4;"><span class="data"> 40 </span></td>
+    <td style="--start:0.5; --size:0.3;"><span class="data"> 30 </span></td>
+    <td style="--start:0.1; --size:0.2;"><span class="data"> 20 </span></td>
+  </tr>
+  </tbody>
+</table>
+-->
 

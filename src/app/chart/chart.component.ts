@@ -11,7 +11,7 @@ export interface ChartData {
   max?: number;
   colors?: string[];
   labels?: string[] | Label[];
-  legends?: Legend[];
+  legends?: string[] | Legend[];
   datasets?: ChartDataSet[];
   headers?: string[];
 }
@@ -41,6 +41,11 @@ export interface Label {
 export interface ChartDataSet {
   label?: string | Label;
   rows: Row[] | number[];
+}
+
+export interface ReversedDataSet {
+  label?: Label;
+  rows: Row[];
 }
 
 
@@ -83,8 +88,8 @@ export class ChartComponent extends ChartBase implements OnInit {
   @Input() max: number = null;
   @Input() start = 0.0;
 
-  @Input()  chartData: ChartData;
-  @Input()  overlay = false;
+  @Input() chartData: ChartData;
+  @Input() overlay = false;
 
   constructor() {
     super();
@@ -133,9 +138,6 @@ export class ChartComponent extends ChartBase implements OnInit {
 
 
   ngOnInit(): void {
-
-    console.log('ngOnInit', this.chartData);
-
     if (this.type === 'line') {
       this.dataSpacing = 0;
       this.showDataAxis = false;
@@ -146,6 +148,7 @@ export class ChartComponent extends ChartBase implements OnInit {
       this.showDataAxis = false;
     }
 
+    this.adjustLegends();
     this.adjustLabels();
     this.adjustRowDataAndFindMax();
     if (this.chartData.datasets && this.chartData.datasets.length > 1) {
@@ -153,10 +156,43 @@ export class ChartComponent extends ChartBase implements OnInit {
     }
   }
 
+  getReverseMapped(): ReversedDataSet[] {
+    const rowsCollection: ReversedDataSet[] = [];
+    if (this.chartData.datasets && this.chartData.datasets.length > 0) {
+      const nbOfRows = this.chartData.datasets[0].rows.length;
+
+      for (let row = 0; row < nbOfRows; row++) {
+        const rows: Row[] = [];
+        let label: any = {text: ''};
+        if (this.chartData.labels && this.chartData.labels.length > row){
+          label = this.chartData.labels[row];
+        }
+        rowsCollection.push({rows, label});
+      }
+      for (let row = 0; row < nbOfRows; row++) {
+        const rows = rowsCollection[row].rows;
+        // tslint:disable-next-line:prefer-for-of
+        for (let ds = 0; ds < this.chartData.datasets.length; ds++) {
+          const r: any = this.chartData.datasets[ds].rows[row];
+          rows.push(r);
+        }
+      }
+    }
+    return rowsCollection;
+  }
+
+
   private adjustLabels(): void {
     if (this.chartData.labels && this.chartData.labels.length > 0) {
       if (typeof this.chartData.labels[0] === 'string') {
         this.chartData.labels = this.convertLabels(this.chartData.labels);
+      }
+    }
+  }
+  private adjustLegends(): void {
+    if (this.chartData.legends && this.chartData.legends.length > 0) {
+      if (typeof this.chartData.legends[0] === 'string') {
+        this.chartData.legends = this.convertLegends(this.chartData.legends);
       }
     }
   }
@@ -170,7 +206,7 @@ export class ChartComponent extends ChartBase implements OnInit {
   }
 
   private isRowElement(data: Row | number): data is Row {
-    return (data as Row).data !== undefined;
+    return (data as Row).value !== undefined;
   }
 
   private convertRows(dataRows: any[]): Row[] {
@@ -197,6 +233,24 @@ export class ChartComponent extends ChartBase implements OnInit {
     return rows;
   }
 
+  private fillStartPositions(rows: Row[]): Row[] {
+    if (rows.length === 0) {
+      return rows;
+    }
+    if (!rows[0].start) {
+      rows[0].start = this.start;
+    }
+    let previous = rows[0].value;
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 1; i < rows.length; i++) {
+      if (!rows[i].start) {
+        rows[i].start = previous;
+      }
+      previous = rows[i].value;
+    }
+    return rows;
+  }
+
   private convertLabels(labelSet: any[]): Label[] {
     const labels: Label[] = [];
     labelSet.forEach((l) => labels.push({text: l, hide: false, class: null, subClass: null}));
@@ -212,6 +266,11 @@ export class ChartComponent extends ChartBase implements OnInit {
     }
     return labels;
   }
+  private convertLegends(legendColl: any[]): Legend[] {
+    const legends: Legend[] = [];
+    legendColl.forEach((l) => legends.push({text: l}));
+    return legends;
+  }
 
   private adjustRowDataAndFindMax(): void {
     if (this.chartData.datasets && this.chartData.datasets.length > 0) {
@@ -223,6 +282,9 @@ export class ChartComponent extends ChartBase implements OnInit {
           }
           if (dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
             dataset.rows = this.convertRows(dataset.rows);
+          } else if (dataset.rows.length > 0) {
+            const rows: any = dataset.rows;
+            dataset.rows = this.fillStartPositions(rows);
           }
         }
       );
