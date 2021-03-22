@@ -32,11 +32,13 @@ export class ChartComponent extends ChartBase implements OnInit {
   @Input() labelAlignment: LabelAlignment = 'labels-align-center';
   @Input() showLabels = true;
   @Input() hideLabelsNth = -1;
+  @Input() showOnlyLabelsNth = -1;
 
   @Input() showPrimaryAxis = true;
   @Input() showDataAxis = true;
   @Input() stacked = false;
   @Input() multiple = false;
+  @Input() showPercentage = false;
   @Input() nbSecondaryAxis = 0;
   @Input() dataSpacing = 10;
   @Input() dataSetsSpacing = 0;
@@ -50,11 +52,20 @@ export class ChartComponent extends ChartBase implements OnInit {
     super();
     this.type = 'column';
     this.multiple = false;
-    this.chartData = {
-      max: null,
-      legends: [],
-      datasets: [],
-    };
+    this.chartData = this.createChartData();
+  }
+  public getSize(row: Row, max: number, rows?: Row[]): number {
+    if (!this.showPercentage)
+    {
+      return row.value / max;
+    }
+    if (rows)
+    {
+      let sum = 0.0;
+      rows.forEach((r)  => sum += r.value);
+      return row.value / sum;
+    }
+    return 0.0;
   }
 
   get tableClasses(): string {
@@ -70,6 +81,9 @@ export class ChartComponent extends ChartBase implements OnInit {
     }
     if (Boolean(this.multiple)) {
       c.push(`multiple`);
+    }
+    if (Boolean(this.stacked)) {
+      c.push(`stacked`);
     }
     if (Boolean(this.dataSpacing)) {
       c.push(`data-spacing-${this.dataSpacing}`);
@@ -91,7 +105,6 @@ export class ChartComponent extends ChartBase implements OnInit {
     return c.join(' ');
   }
 
-
   ngOnInit(): void {
     if (this.type === 'line') {
       this.dataSpacing = 0;
@@ -102,11 +115,14 @@ export class ChartComponent extends ChartBase implements OnInit {
       this.dataSpacing = 0;
       this.showDataAxis = false;
     }
-
+    console.log('this.chartData', this.chartData);
+    if (!this.chartData) {
+      this.chartData = this.createChartData();
+    }
     this.adjustLegends();
     this.adjustLabels();
     this.adjustRowDataAndFindMax();
-    if (this.chartData.datasets && this.chartData.datasets.length > 1) {
+    if (this.chartData && this.chartData.datasets && this.chartData.datasets.length > 1) {
       this.multiple = true;
     }
   }
@@ -119,7 +135,7 @@ export class ChartComponent extends ChartBase implements OnInit {
       for (let row = 0; row < nbOfRows; row++) {
         const rows: Row[] = [];
         let label: any = {text: ''};
-        if (this.chartData.labels && this.chartData.labels.length > row){
+        if (this.chartData.labels && this.chartData.labels.length > row) {
           label = this.chartData.labels[row];
         }
         rowsCollection.push({rows, label});
@@ -136,6 +152,14 @@ export class ChartComponent extends ChartBase implements OnInit {
     return rowsCollection;
   }
 
+  private createChartData(): ChartData {
+    return {
+      max: null,
+      labels: [],
+      legends: [],
+      datasets: [],
+    };
+  }
 
   private adjustLabels(): void {
     if (this.chartData.labels && this.chartData.labels.length > 0) {
@@ -144,6 +168,7 @@ export class ChartComponent extends ChartBase implements OnInit {
       }
     }
   }
+
   private adjustLegends(): void {
     if (this.chartData.legends && this.chartData.legends.length > 0) {
       if (typeof this.chartData.legends[0] === 'string') {
@@ -210,6 +235,8 @@ export class ChartComponent extends ChartBase implements OnInit {
     const labels: Label[] = [];
     labelSet.forEach((l) => labels.push({text: l, hide: false, class: null, subClass: null}));
     const hideLabelN = parseInt(this.hideLabelsNth.toString(), 10);
+    const showOnlyLabelsNth = parseInt(this.showOnlyLabelsNth.toString(), 10);
+
     if (hideLabelN > -1) {
       let index = -1;
       labels.forEach((l) => {
@@ -218,9 +245,19 @@ export class ChartComponent extends ChartBase implements OnInit {
         }
         index++;
       });
+    } else if (showOnlyLabelsNth > -1) {
+      let index = -1;
+      labels.forEach((l) => l.hide = true);
+      labels.forEach((l) => {
+        if (index % showOnlyLabelsNth === 0) {
+          l.hide = false;
+        }
+        index++;
+      });
     }
     return labels;
   }
+
   private convertLegends(legendColl: any[]): Legend[] {
     const legends: Legend[] = [];
     legendColl.forEach((l) => legends.push({text: l}));
@@ -235,9 +272,9 @@ export class ChartComponent extends ChartBase implements OnInit {
               text: dataset.label,
             };
           }
-          if (dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
+          if (dataset.rows && dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
             dataset.rows = this.convertRows(dataset.rows);
-          } else if (dataset.rows.length > 0) {
+          } else if (dataset.rows && dataset.rows.length > 0) {
             const rows: any = dataset.rows;
             dataset.rows = this.fillStartPositions(rows);
           }

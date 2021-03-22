@@ -1,1 +1,73 @@
-<p>area2 works!</p>
+<chart-css [chartId]="'area-chart-2-1'"
+           [type]="'area'"
+           [caption]="'Area 2 expenses'"
+           [showData]="false"
+           [showDataOnHover]="true"
+           [legendShape]="'legend-line'"
+           [hideLabelsNth]="2"
+           [dataSpacing]="0"
+           [overlay]="true"
+           [chartData]="chartData">
+</chart-css>
+
+
+<chart-css [chartId]="'area-chart-2-2'"
+           [type]="'area'"
+           [caption]="'Area 2 expenses'"
+           [showPrimaryAxis]="false"
+           [showData]="false"
+           [showDataOnHover]="true"
+           [legendShape]="'legend-line'"
+           [overlay]="true"
+           [hideLabelsNth]="2"
+           [dataSpacing]="0"
+           [chartData]="chartData">
+</chart-css>
+
+<chart-css [chartId]="'area-chart-2-3'"
+           [type]="'area'"
+           [caption]="'Area 2 expenses'"
+           [showDataOnHover]="true"
+           [legendShape]="'legend-line'"
+           [showOnlyLabelsNth]="6"
+           [overlay]="true"
+           [dataSpacing]="0"
+           [chartData]="chartData">
+</chart-css>
+
+<chart-css [chartId]="'area-chart-2-4'"
+           [type]="'area'"
+           [caption]="'Area 2 expenses'"
+           [showData]="false"
+           [showDataOnHover]="true"
+           [legendShape]="'legend-line'"
+           [showOnlyLabelsNth]="6"
+           [dataSpacing]="0"
+           [overlay]="true"
+           [chartData]="{
+              labels: labels,
+              datasets: [{rows: dataSet1}, {rows: dataSet2}]
+           }
+        ">
+</chart-css>
+
+
+<chart-css [chartId]="'area-chart-2-5'"
+           [type]="'area'"
+           [caption]="'Area 2 expenses'"
+           [showDataAxis]="true"
+           [showData]="false"
+           [showDataOnHover]="true"
+           [legendShape]="'legend-line'"
+           [showOnlyLabelsNth]="6"
+           [dataSpacing]="0"
+           [overlay]="true"
+           [chartData]="{
+
+              datasets: [{rows: dataSet3}, {rows: dataSet1}]
+           }
+        ">
+</chart-css>
+
+
+

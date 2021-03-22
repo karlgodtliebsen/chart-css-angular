@@ -2,9 +2,7 @@ import {ChartData, Row} from './models';
 
 export class ChartBase {
 
-  public getSize(row: Row, max: number): number {
-    return row.value / max;
-  }
+
 
   public getStart(row: Row, max: number): number {
     if (row.start) {

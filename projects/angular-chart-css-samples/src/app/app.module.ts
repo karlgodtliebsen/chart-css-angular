@@ -13,6 +13,10 @@ import { Bar5Component } from './examples/bar5/bar5.component';
 import { Line2Component } from './examples/line2/line2.component';
 import { Area1Component } from './examples/area1/area1.component';
 import { ChartModule} from '../../../angular-chart-css/src/lib';
+import { Area2Component } from './examples/area2/area2.component';
+import { HorizontalBar1Component } from './examples/horizontal-bar1/horizontal-bar1.component';
+import { HorizontalStackedBar1Component } from './examples/horizontal-stacked-bar1/horizontal-stacked-bar1.component';
+import { StackedBar1Component } from './examples/stacked-bar1/stacked-bar1.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +30,10 @@ import { ChartModule} from '../../../angular-chart-css/src/lib';
     Bar5Component,
     Line2Component,
     Area1Component,
+    Area2Component,
+    HorizontalBar1Component,
+    HorizontalStackedBar1Component,
+    StackedBar1Component,
   ],
   imports: [
     BrowserModule,

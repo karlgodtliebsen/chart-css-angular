@@ -19,5 +19,8 @@
     "stylelint-prettier": "^1.1.1",
     "@ngneat/spectator": "^7.1.0",
     "eslint": "^7.22.0"
+  },
+  "resolutions": {
+    "webpack": "5.4.0"
   }
 }

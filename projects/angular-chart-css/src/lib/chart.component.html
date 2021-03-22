@@ -11,10 +11,10 @@
          [class.show-data-axes]="showDataAxis"
          [class.show-primary-axis]="showPrimaryAxis"
          [class.show-labels]="showLabels"
-         [class.show-stacked]="stacked"
+
   >
     <caption [ngClass]="captionStyle"> {{caption}} </caption>
-    <thead>
+    <thead *ngIf="chartData.headers">
     <tr>
       <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
     </tr>
@@ -38,18 +38,24 @@
   <ng-container *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
     <tr *ngFor="let row of dataset.rows; let r = index">
       <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
-          scope="row" [class.hide-label]="chartData.labels[r].hide" [ngClass]="chartData.labels[r].class">
+          scope="row"
+          class="labels-cell"
+          [class.hide-label]="chartData.labels[r].hide"
+          [ngClass]="chartData.labels[r].class">
         {{chartData.labels[r].text}}
         <div *ngIf="chartData.labels[r].subClass" [ngClass]="chartData.labels[r].subClass"></div>
       </th>
 
       <th *ngIf="dataset.label"
-          scope="row" [ngClass]="dataset.label.class"> {{dataset.label.text}}
+          scope="row"
+          class="labels-cell"
+          [class.hide-label]="chartData.labels[r].hide"
+          [ngClass]="dataset.label.class"> {{dataset.label.text}}
       </th>
 
       <td
         [style.color]="row.datacolor"
-        [style.--size]="getSize( row, max )"
+        [style.--size]="getSize( row, max, dataset.rows )"
         [style.--color]="getColor(chartData, row, dataSetIndex)"
         [style.--start]="getStart( row , max)">
         <span *ngIf="row.data" class="data">{{row.data}} </span>
@@ -59,30 +65,31 @@
     </tr>
   </ng-container>
   </tbody>
-
-  <!--
-  <app-single-data-set  [chartData]="chartData" [max]="max">
-  </app-single-data-set>
-  -->
 </ng-template>
 
 <ng-template #multipleSideBySideDataSetTemplate>
   <tbody>
   <tr *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
     <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
-        scope="row" [class.hide-label]="chartData.labels[dataSetIndex].hide"
+        class="labels-cell"
+        scope="row"
+        [class.hide-label]="chartData.labels[dataSetIndex].hide"
         [ngClass]="chartData.labels[dataSetIndex].class">
       {{chartData.labels[dataSetIndex].text}}
-      <div *ngIf="chartData.labels[dataSetIndex].subClass" [class]="chartData.labels[dataSetIndex].subClass"></div>
+      <div *ngIf="chartData.labels[dataSetIndex].subClass"
+           [class]="chartData.labels[dataSetIndex].subClass"></div>
     </th>
 
     <th *ngIf="dataset.label"
-        scope="row" [ngClass]="dataset.label.class"> {{dataset.label.text}}
+        class="labels-cell"
+        scope="row"
+        [class.hide-label]="dataset.label.hide"
+        [ngClass]="dataset.label.class"> {{dataset.label.text}}
     </th>
 
     <td *ngFor="let row of dataset.rows; let r = index"
         [style.color]="row.datacolor"
-        [style.--size]="getSize( row , max)"
+        [style.--size]="getSize( row , max, dataset.rows)"
         [style.--color]="getColor(chartData, row, dataSetIndex)"
         [style.--start]="getStart( row, max )">
       <span *ngIf="row.data" class="data">{{row.data}} </span>
@@ -97,12 +104,15 @@
   <tbody>
   <tr *ngFor="let rowsCollection of getReverseMapped(); let rowIndex = index">
     <th *ngIf="rowsCollection.label"
-        scope="row" [ngClass]="rowsCollection.label.class"> {{rowsCollection.label.text}}
+        class="labels-cell"
+        scope="row"
+        [class.hide-label]="rowsCollection.label.hide"
+        [ngClass]="rowsCollection.label.class"> {{rowsCollection.label.text}}
     </th>
     <ng-container *ngFor="let row of rowsCollection.rows; let dataSetIndex = index;">
       <td
         [style.color]="row.datacolor"
-        [style.--size]="getSize( row, max )"
+        [style.--size]="getSize( row, max, rowsCollection.rows )"
         [style.--color]="getColor(chartData, row, dataSetIndex)"
         [style.--start]="getStart( row, max )"
       >
