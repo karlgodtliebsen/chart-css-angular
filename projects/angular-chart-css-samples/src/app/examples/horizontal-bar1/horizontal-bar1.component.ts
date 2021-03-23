@@ -10,22 +10,57 @@ import {ChartData} from '../../../../../angular-chart-css/src/lib';
 export class HorizontalBar1Component implements OnInit {
 
   chartData: ChartData = {
-    legends: [{ text: '# Vaccinations' }, { text: '# Vaccinations' }, { text: '# Vaccinations' }],
-    // labels: ['Asia', 'America', 'Europe'],
     datasets: [
       {
         rows: [
-          { data: '10', value: 10, tooltip: 'tips 10' },
-          { data: '20', value: 20, tooltip: 'tips 20', },
-          { data: '30', value: 30, tooltip: 'tips 30' },
-          { data: '40', value: 40, tooltip: 'tips 40' },
-          { data: '50', value: 50, tooltip: 'tips 50' },
-          { data: '60', value: 60, tooltip: 'tips 60' },
-          { data: '70', value: 70, tooltip: 'tips 70' },
+          { data: '0.2', value: 0.2, tooltip: 'tips 0.2' },
+          { data: '0.4', value: 0.4, tooltip: 'tips 0.4', },
+          { data: '0.6', value: 0.6, tooltip: 'tips 0.6' },
+          { data: '0.8', value: 0.8, tooltip: 'tips 0.8' },
+          { data: '1.0', value: 1.0, tooltip: 'tips 1.0' },
         ]
       }
       ]
   };
+
+  chartDataLabels: ChartData = {
+    labels: ['2016', '2017', '2018', '2019', '2020'],
+    datasets: [
+      {
+        rows: [
+          { data: '0.2', value: 0.2, tooltip: 'tips 0.2' },
+          { data: '0.4', value: 0.4, tooltip: 'tips 0.4', },
+          { data: '0.6', value: 0.6, tooltip: 'tips 0.6' },
+          { data: '0.8', value: 0.8, tooltip: 'tips 0.8' },
+          { data: '1.0', value: 1.0, tooltip: 'tips 1.0' },
+        ]
+      }
+    ]
+  };
+
+  chartDataMultiple: ChartData = {
+    datasets: [
+      {
+        rows: [
+          { data: '0.2', value: 0.2, tooltip: 'tips 0.2' },
+          { data: '0.4', value: 0.4, tooltip: 'tips 0.4', },
+          { data: '0.6', value: 0.6, tooltip: 'tips 0.6' },
+          { data: '0.8', value: 0.8, tooltip: 'tips 0.8' },
+          { data: '1.0', value: 1.0, tooltip: 'tips 1.0' },
+        ]
+      },
+      {
+        rows: [
+          { data: '0.2', value: 0.2, tooltip: 'tips 0.2' },
+          { data: '0.4', value: 0.4, tooltip: 'tips 0.4', },
+          { data: '0.6', value: 0.6, tooltip: 'tips 0.6' },
+          { data: '0.8', value: 0.8, tooltip: 'tips 0.8' },
+          { data: '1.0', value: 1.0, tooltip: 'tips 1.0' },
+        ]
+      }
+    ]
+  };
+
 
   constructor() {
   }

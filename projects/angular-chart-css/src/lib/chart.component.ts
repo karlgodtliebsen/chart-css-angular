@@ -38,6 +38,7 @@ export class ChartComponent extends ChartBase implements OnInit {
   @Input() showDataAxis = true;
   @Input() stacked = false;
   @Input() multiple = false;
+  @Input() reverse = false;
   @Input() showPercentage = false;
   @Input() nbSecondaryAxis = 0;
   @Input() dataSpacing = 10;
@@ -75,6 +76,9 @@ export class ChartComponent extends ChartBase implements OnInit {
     }
     if (Boolean(this.orientation)) {
       c.push(this.orientation);
+    }
+    if (Boolean(this.reverse)) {
+      c.push('reverse');
     }
     if (Boolean(this.labelAlignment)) {
       c.push(this.labelAlignment);

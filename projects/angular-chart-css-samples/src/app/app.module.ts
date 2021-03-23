@@ -17,6 +17,7 @@ import { Area2Component } from './examples/area2/area2.component';
 import { HorizontalBar1Component } from './examples/horizontal-bar1/horizontal-bar1.component';
 import { HorizontalStackedBar1Component } from './examples/horizontal-stacked-bar1/horizontal-stacked-bar1.component';
 import { StackedBar1Component } from './examples/stacked-bar1/stacked-bar1.component';
+import { Bar3dComponent } from './examples/bar3d/bar3d.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { StackedBar1Component } from './examples/stacked-bar1/stacked-bar1.compo
     HorizontalBar1Component,
     HorizontalStackedBar1Component,
     StackedBar1Component,
+    Bar3dComponent,
   ],
   imports: [
     BrowserModule,
