@@ -1,9 +1,6 @@
 {
   "name": "angular-chart-css",
   "version": "0.0.1",
-  "scripts": {
-    "postinstall": "ngcc"
-  },
   "peerDependencies": {
     "@angular/common": "^11.0.9",
     "@angular/core": "^11.0.9",
@@ -11,8 +8,7 @@
     "charts.css": "^0.9.0"
   },
   "dependencies": {
-    "tslib": "^2.0.0",
-    "charts.css": "^0.9.0"
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
     "lint-staged": "^9.4.2",

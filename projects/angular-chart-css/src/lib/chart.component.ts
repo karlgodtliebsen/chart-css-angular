@@ -114,12 +114,10 @@ export class ChartComponent extends ChartBase implements OnInit {
       this.dataSpacing = 0;
       this.showDataAxis = false;
     }
-
     if (this.type === 'area') {
       this.dataSpacing = 0;
       this.showDataAxis = false;
     }
-    console.log('this.chartData', this.chartData);
     if (!this.chartData) {
       this.chartData = this.createChartData();
     }
