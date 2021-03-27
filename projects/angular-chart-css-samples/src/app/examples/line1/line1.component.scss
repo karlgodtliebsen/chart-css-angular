@@ -1,0 +1,46 @@
+#line-chart1{
+}
+
+#line-chart-1.line {
+  height: 450px;
+  max-height: 500px;
+  max-width: 800px;
+  margin: 0 auto;
+  --labels-size: 2em;
+
+}
+
+#line-chart-1.line th {
+  font-size: 0.6rem;
+  font-weight: bold;
+  color: red;
+  width:50px;
+
+  background-color: #f6f6f6;
+}
+
+#line-chart-1 .charts-css .tooltip {
+  position: absolute;
+  z-index: 1;
+  bottom: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  padding: 5px 10px;
+
+  border-radius: 6px;
+  border-style: solid;
+  border-width: 1;
+
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: opacity .3s;
+  transition: opacity .3s;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  font-size: .9rem;
+}

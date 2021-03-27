@@ -1,0 +1,14 @@
+#stacked-example-1 {
+  height: 200px;
+  max-width: 400px;
+  margin: 0 auto;
+  --heading-size: 2.5rem;
+  --color-1: rgba(255, 200, 0, 0.6);
+  --color-2: rgba(255, 150, 0, 0.6);
+  --color-3: rgba(255,  75, 0, 0.6);
+  --color-4: rgba(255,   0, 0, 0.6);
+}
+#stacked-example-1 caption {
+  font-weight: bold;
+}
+

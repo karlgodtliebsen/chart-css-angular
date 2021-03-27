@@ -1,4 +1,4 @@
-import { createComponentFactory, SpectatorHost, createHostFactory} from '@ngneat/spectator';
+import {createComponentFactory, SpectatorHost, createHostFactory} from '@ngneat/spectator';
 import {ChartComponent} from './index';
 
 const createHost = createHostFactory({
@@ -26,7 +26,7 @@ describe('Should Create Empty ChartComponent', () => {
     expect(element).toBeTruthy();
   });
 });
-/*
+
 describe('Should Create Valid ChartComponent', () => {
   let component: ChartComponent;
   let spectator: SpectatorHost<ChartComponent>;
@@ -68,4 +68,3 @@ describe('Should Create Valid ChartComponent', () => {
 
   });
 });
-*/

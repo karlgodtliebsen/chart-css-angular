@@ -38,8 +38,6 @@ describe('ChartComponent', () => {
   it('should validate table and classes', () => {
     const table = element.querySelector('table');
     expect(table).toBeTruthy();
-    console.log(table);
-
     table.classList.contains('charts-css');
     table.classList.contains('charts');
     table.classList.contains('show-data-on-hover');
@@ -67,6 +65,7 @@ describe('ChartComponent', () => {
     expect(component.showOnlyLabelsNth).toBe(-1);
     expect(component.legendShape).toBe('legend-circle');
     expect(component.showData).toBeFalse();
+    expect(component.legendInline).toBeTrue();
     expect(component.showDataOnHover).toBeTrue();
   });
 
@@ -78,6 +77,7 @@ describe('ChartComponent', () => {
     component.legendShape = 'legend-ellipse';
     component.showData = false;
     component.showDataOnHover = false;
+    component.legendInline = false;
 
     component.hideLabelsNth = 2;
     component.showOnlyLabelsNth = 3;
@@ -93,7 +93,7 @@ describe('ChartComponent', () => {
     expect(component.hideLabelsNth).toBe(2);
     expect(component.showOnlyLabelsNth).toBe(3);
     expect(component.legendShape).toBe('legend-ellipse');
-
+    expect(component.legendInline).toBeFalse();
     expect(component.showData).toBeFalse();
     expect(component.showDataOnHover).toBeFalse();
 
@@ -121,6 +121,8 @@ describe('ChartComponent', () => {
       ],
     };
     component.ngOnInit();
+    console.log(component);
+
     fixture.detectChanges();
     const table = element.querySelector('table');
     expect(table).toBeTruthy();
