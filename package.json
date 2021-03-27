@@ -2,6 +2,7 @@
   "name": "angular-chart-css",
   "version": "0.0.1",
   "scripts": {
+    "postinstall": "ngcc",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",

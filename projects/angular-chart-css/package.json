@@ -1,6 +1,9 @@
 {
   "name": "angular-chart-css",
   "version": "0.0.1",
+  "scripts": {
+    "postinstall": "ngcc"
+  },
   "peerDependencies": {
     "@angular/common": "^11.0.9",
     "@angular/core": "^11.0.9",
@@ -19,8 +22,5 @@
     "stylelint-prettier": "^1.1.1",
     "@ngneat/spectator": "^7.1.0",
     "eslint": "^7.22.0"
-  },
-  "resolutions": {
-    "webpack": "5.4.0"
   }
 }

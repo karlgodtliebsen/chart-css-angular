@@ -1,44 +1,39 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Spectator, createComponentFactory } from '@ngneat/spectator';
-
-
-import { ChartComponent } from './chart.component';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
+import {ChartComponent} from './chart.component';
+import {DebugElement} from '@angular/core';
+import {ChartModule} from './chart.module';
 
 describe('ChartComponent', () => {
   let component: ChartComponent;
   let fixture: ComponentFixture<ChartComponent>;
+  let element: HTMLElement;
+  let debugElement: DebugElement;
 
-  let spectator: Spectator<ChartComponent>;
-  const createComponent = createComponentFactory(ChartComponent);
+  // https://angular.io/guide/testing-components-basics
 
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ChartComponent ]
-    })
-    .compileComponents();
-  });
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule(
+      {
+      declarations: [ChartComponent],
+      imports: [ChartModule]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChartComponent);
     component = fixture.componentInstance;
+    element = fixture.nativeElement;
+    debugElement = fixture.debugElement;
     fixture.detectChanges();
   });
 
-  beforeEach(() => spectator = createComponent());
-/*
-  it('should have a success class by default', () => {
-    expect(spectator.query('button')).toHaveClass('success');
-  });
-
-  it('should set the class name according to the [className] input', () => {
-    spectator.setInput('className', 'danger');
-    expect(spectator.query('button')).toHaveClass('danger');
-    expect(spectator.query('button')).not.toHaveClass('success');
-  });
-*/
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture).toBeDefined();
+    expect(component).toBeDefined();
+    expect(element).toBeDefined();
+    /*
+   const p = bannerElement.querySelector('p');
+  expect(p.textContent).toEqual('banner works!');
+    */
   });
 });
