@@ -1,17 +1,24 @@
 <div id="{{chartId}}-container" class="chart-wrapper" *ngIf="chartData.datasets">
-  <ul *ngIf="chartData.legends" class="charts-css legend" [ngClass]="legendClasses"
+  <ul *ngIf="chartData.legends !== undefined && chartData.legends.length > 0" class="charts-css legend" [ngClass]="legendClasses"
       [class.legend-inline]="legendInline">
     <li *ngFor="let legend of chartData.legends" [style.color]="legend.color">{{legend.text}}</li>
   </ul>
+  <ng-container *ngIf="!mixed">
+    <ng-container *ngTemplateOutlet="notMixedTemplate"></ng-container>
+  </ng-container>
+  <ng-container *ngIf="mixed">
+    <ng-container *ngTemplateOutlet="mixedTemplate"></ng-container>
+  </ng-container>
+</div>
 
-  <table id="{{chartId}}" class="charts-css chart " [ngClass]="tableClasses"
+<ng-template #mixedTemplate>
+  <table *ngFor="let dataset of chartData.datasets; let dataSetIndex = index" class="charts-css chart " [ngClass]="tableClasses"
          [class.show-heading]="caption"
          [class.show-data]="showData"
          [class.show-data-on-hover]="showDataOnHover"
          [class.show-data-axes]="showDataAxis"
          [class.show-primary-axis]="showPrimaryAxis"
          [class.show-labels]="showLabels"
-
   >
     <caption [ngClass]="captionStyle"> {{caption}} </caption>
     <thead *ngIf="chartData.headers">
@@ -19,9 +26,27 @@
       <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
     </tr>
     </thead>
+    <ng-container *ngTemplateOutlet="singleDataSetTemplate; context: {$implicit: chartData, labels: chartData.labels, dataset: dataset}"></ng-container>
+  </table>
+</ng-template>
 
-    <ng-container *ngIf="!multiple">
-      <ng-container *ngTemplateOutlet="singleDataSetTemplate"></ng-container>
+<ng-template #notMixedTemplate>
+  <table id="{{chartId}}" class="charts-css chart " [ngClass]="tableClasses"
+         [class.show-heading]="caption"
+         [class.show-data]="showData"
+         [class.show-data-on-hover]="showDataOnHover"
+         [class.show-data-axes]="showDataAxis"
+         [class.show-primary-axis]="showPrimaryAxis"
+         [class.show-labels]="showLabels"
+  >
+    <caption [ngClass]="captionStyle"> {{caption}} </caption>
+    <thead *ngIf="chartData.headers">
+    <tr>
+      <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
+    </tr>
+    </thead>
+    <ng-container *ngIf="!multiple && chartData.datasets.length === 1" >
+       <ng-container *ngTemplateOutlet="singleDataSetTemplate; context: {$implicit: chartData, labels: chartData.labels, dataset: chartData.datasets[0]}" ></ng-container>
     </ng-container>
     <ng-container *ngIf="multiple && overlay">
       <ng-container *ngTemplateOutlet="multipleOverlayDataSetTemplate"></ng-container>
@@ -29,24 +54,22 @@
     <ng-container *ngIf="multiple && !overlay">
       <ng-container *ngTemplateOutlet="multipleSideBySideDataSetTemplate"></ng-container>
     </ng-container>
-
   </table>
-</div>
+</ng-template>
 
-<ng-template #singleDataSetTemplate>
+<ng-template #singleDataSetTemplate let-dataset="dataset" let-labels="labels" >
   <tbody>
-  <ng-container *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
     <tr *ngFor="let row of dataset.rows; let rowIndex = index">
-      <th *ngIf="chartData.labels && chartData.labels.length > dataSetIndex"
+      <th *ngIf="labels && labels.length > 0"
           scope="row"
           class="labels-cell"
-          [class.hide-label]="chartData.labels[rowIndex].hide"
-          [ngClass]="chartData.labels[rowIndex].class">
-        {{chartData.labels[rowIndex].text}}
-        <div *ngIf="chartData.labels[rowIndex].subClass" [ngClass]="chartData.labels[rowIndex].subClass"></div>
+          [class.hide-label]="labels[rowIndex].hide"
+          [ngClass]="labels[rowIndex].class">
+        {{labels[rowIndex].text}}
+        <div *ngIf="labels[rowIndex].subClass" [ngClass]="labels[rowIndex].subClass"></div>
       </th>
 
-      <th *ngIf="dataset.label  && chartData.labels.length > rowIndex"
+      <th *ngIf="dataset.label  && labels.length > rowIndex"
           scope="row"
           class="labels-cell"
           [class.hide-label]="chartData.labels[rowIndex].hide"
@@ -56,14 +79,14 @@
       <td
         [style.color]="row.datacolor"
         [style.--size]="getSize( row, max, dataset.rows )"
-        [style.--color]="getColor(chartData, row, dataSetIndex)"
-        [style.--start]="getStart( row , max)">
+        [style.--color]="getColor(chartData, row, rowIndex)"
+        [style.--start]="getStart( row , max)"
+      >
         <span *ngIf="row.data" class="data">{{row.data}} </span>
         <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
       </td>
 
     </tr>
-  </ng-container>
   </tbody>
 </ng-template>
 

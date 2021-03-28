@@ -5,29 +5,17 @@
   --chart-legend-background-color: rgba(0, 0, 255, 0.1);
   --chart-background-color: rgba(255, 255, 255, 0.9);
   --chart-border-color: rgba(0, 0, 0, 0.9);
-
   --chart-legend-height: 50px;
   --chart-height: 400px;
   --chart-width: 700px;
   --chart-wrapper-max-width: 800px;
   --chart-wrapper-max-height: 800px;
-  --chart-wrapper-height: calc(--chart-height + --legend-height);
+  --chart-wrapper-height: calc(var(--chart-height) + var(--legend-height));
   --chart-wrapper-width: --chart-width;
-  --chart-max-width: calc(--chart-wrapper-max-width - 20px);
-  --chart-max-height: calc(--chart-wrapper-max-height - 20px);
-/*
-  --color-1: rgba(230, 30, 30, 0.2);
-  --color-2: rgba(230, 30, 30, 0.4);
-  --color-3: rgba(230, 30, 30, 0.5);
-  --color-4: rgba(230, 30, 30, 0.6);
-  --color-5: rgba(230, 30, 30, 1.0);
-  --color-6: rgba(230, 30, 30, 1.0);
-  --color-7: rgba(230, 30, 30, 0.8);
-  --color-8: rgba(230, 30, 30, 0.6);
-  --color-9: rgba(230, 30, 30, 0.4);
-  --color-10: rgba(230, 30, 30, 0.2);
-  */
+  --chart-max-width: calc(var(--chart-wrapper-max-width) - 20px);
+  --chart-max-height: calc(var(--chart-wrapper-max-height) - 20px);
 }
+
 
 :host{
 }
@@ -46,15 +34,16 @@
   border-style: solid;
   background-color: var(--chart-background-color);
   padding: 5px;
+  padding-top: 15px;
 }
 
 .chart-wrapper  .chart  {
+  //good place to override charts.css class: charts-css
+  // --chart-bg-color:  rgba(130, 150, 120, 0.75);
   height: var(--chart-height);
   max-width: var(--chart-max-width);
   margin: 0 auto;
 }
-
-
 .chart-wrapper .legend {
   display: flex;
   height: var(--chart-legend-height);
@@ -71,7 +60,80 @@
   border-color: var(--chart-border-color);
   border-width: 1px;
   border-style: solid;
-
 }
 
+.charts-css:not(legend){
+  display: none;
+}
 
+//pie section
+
+@mixin position-fullwidth {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+}
+
+.charts-css.pie {
+  --chart-max-width: calc(var(--chart-wrapper-max-width)  / 2 - 20px);
+  left: calc(var(--chart-wrapper-max-width) / 4 );
+}
+
+.charts-css.pie {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  caption,
+  thead,
+  tfoot {
+     display: none;
+  }
+
+  tbody {
+    position: relative;
+
+    // Create a circle
+    display: block;
+    width: 100%;
+    height: 0;               // Old hack before "aspect-ratio"
+    padding-block-end: 100%; // makes height 100% of the width
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+
+    tr {
+      display: block;
+      th {
+        display: none;
+      }
+
+      td {
+        @include position-fullwidth();
+
+        transform: rotate( calc( 1turn * var( --start, 0 ) ) );
+
+        background: conic-gradient(
+            var( --color, transparent ) 0 calc( 100% * var( --size, 0 ) ),transparent 0 100%
+        );
+
+        .data {
+          @include position-fullwidth();
+
+          transform: rotate( calc( 0.5turn * var( --size, 0 ) ) );
+          // top: -1.5rem;
+        }
+      }
+    }
+  }
+}

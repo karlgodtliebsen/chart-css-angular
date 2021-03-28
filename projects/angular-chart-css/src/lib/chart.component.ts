@@ -48,11 +48,14 @@ export class ChartComponent extends ChartBase implements OnInit {
 
   @Input() chartData: ChartData;
   @Input() overlay = false;
+  @Input() mixed = false;
+
 
   constructor() {
     super();
     this.type = 'column';
     this.multiple = false;
+    this.mixed = false;
     this.chartData = this.createChartData();
   }
   public getSize(row: Row, max: number, rows?: Row[]): number {
@@ -121,12 +124,19 @@ export class ChartComponent extends ChartBase implements OnInit {
     if (!this.chartData) {
       this.chartData = this.createChartData();
     }
-    this.adjustLegends();
-    this.adjustLabels();
-    this.adjustRowDataAndFindMax();
+
     if (this.chartData && this.chartData.datasets && this.chartData.datasets.length > 1) {
       this.multiple = true;
     }
+    if (this.type === 'mixed') {
+      this.multiple = false;
+      this.mixed = true;
+    }
+
+    this.adjustLegends();
+    this.adjustLabels();
+    this.adjustRowDataAndFindMax();
+
   }
 
   getReverseMapped(): ReversedDataSet[] {
