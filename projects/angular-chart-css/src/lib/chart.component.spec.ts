@@ -89,6 +89,7 @@ describe('ChartComponent', () => {
     expect(component.chartId).toBe('line-1');
     expect(component.reverse).toBeFalse();
     expect(component.stacked).toBeFalse();
+    expect(component.multiple).toBeFalse();
     expect(component.dataSpacing).toBe(0);
     expect(component.hideLabelsNth).toBe(2);
     expect(component.showOnlyLabelsNth).toBe(3);
@@ -110,7 +111,7 @@ describe('ChartComponent', () => {
     component.hideLabelsNth = 2;
     component.showOnlyLabelsNth = 3;
     component.chartData = {
-      labels: ['label 1', 'label 2'],
+      labels: ['label 1', 'label 2', 'label 3'],
       legends: ['legend 1', 'legend 2'],
       colors: ['red', 'green', 'blue'],
       datasets: [
@@ -121,13 +122,104 @@ describe('ChartComponent', () => {
       ],
     };
     component.ngOnInit();
-    console.log(component);
-
     fixture.detectChanges();
+    expect(component.multiple).toBeFalse();
     const table = element.querySelector('table');
     expect(table).toBeTruthy();
-    console.log(table);
+    const rows = table.querySelectorAll('tr');
+    expect(rows.length).toBe(3);
+    const ul = element.querySelectorAll('ul');
+    expect(ul.length).toBe(1);
+    const li = element.querySelectorAll('li');
+    expect(li.length).toBe(2);
 
+  });
+
+  it('should validate multiple datasets  overlayed', () => {
+    component.caption = 'caption';
+    component.chartId = 'line-1';
+    component.legendShape = 'legend-ellipse';
+    component.showData = false;
+    component.showDataOnHover = false;
+    component.hideLabelsNth = 2;
+    component.showOnlyLabelsNth = 3;
+    component.overlay = true;
+    component.chartData = {
+      labels: ['label 1', 'label 2', 'label 3'],
+      legends: ['legend 1', 'legend 2'],
+      colors: ['red', 'green', 'blue'],
+      datasets: [
+        {
+          label: 'dataset 1 label',
+          rows: [100, 200, 300],
+        },
+        {
+          label: 'dataset 2 label',
+          rows: [1000, 2000, 3000],
+        }
+      ],
+    };
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.multiple).toBeTrue();
+    expect(component.overlay).toBeTrue();
+    const table = element.querySelectorAll('table');
+    expect(table).toBeTruthy();
+    expect(table.length).toBe(1);
+
+    const rows = element.querySelectorAll('tr');
+    expect(rows.length).toBe(3);
+
+    const ul = element.querySelectorAll('ul');
+    expect(ul.length).toBe(1);
+
+    const li = element.querySelectorAll('li');
+    expect(li.length).toBe(2);
+
+  });
+
+
+  it('should validate multiple datasets NOT overlayed', () => {
+    component.caption = 'caption';
+    component.chartId = 'line-1';
+    component.legendShape = 'legend-ellipse';
+    component.showData = false;
+    component.showDataOnHover = false;
+    component.hideLabelsNth = 2;
+    component.showOnlyLabelsNth = 3;
+    component.overlay = false;
+    component.chartData = {
+      labels: ['label 1', 'label 2', 'label 3'],
+      legends: ['legend 1', 'legend 2'],
+      colors: ['red', 'green', 'blue'],
+      datasets: [
+        {
+          label: 'dataset 1 label',
+          rows: [100, 200, 300],
+        },
+        {
+          label: 'dataset 2 label',
+          rows: [1000, 2000, 3000],
+        }
+      ],
+    };
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.multiple).toBeTrue();
+
+    const table = element.querySelectorAll('table');
+
+    expect(table).toBeTruthy();
+    expect(table.length).toBe(1);
+
+    const rows = element.querySelectorAll('tr');
+    expect(rows.length).toBe(2);
+
+    const ul = element.querySelectorAll('ul');
+    expect(ul.length).toBe(1);
+
+    const li = element.querySelectorAll('li');
+    expect(li.length).toBe(2);
   });
 
 

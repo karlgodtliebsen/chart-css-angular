@@ -33,7 +33,7 @@ describe('Should Create Valid ChartComponent', () => {
   let element: HTMLElement;
 
   beforeEach(() => {
-    spectator = createHost(`<chart-css>
+    spectator = createHost(`<chart-css
             [chartId]="'area-chart-1'"
             [type]="'area'"
             [caption]="'Area 1 expenses'"
@@ -46,13 +46,15 @@ describe('Should Create Valid ChartComponent', () => {
 </chart-css>`);
     component = spectator.component;
     element = spectator.element;
-    spectator.detectChanges();
     component.ngOnInit();
+    spectator.detectChanges();
   });
 
   it('And have valid component state', () => {
-    console.log(component);
 
+   // console.log(component);
+    const table = element.querySelector('table');
+  //  console.log(table);
     expect(component).toBeTruthy();
     expect(component.type).toBe('area');
     expect(component.caption).toBe('Area 1 expenses');
