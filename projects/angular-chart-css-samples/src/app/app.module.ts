@@ -20,6 +20,7 @@ import { StackedBar1Component } from './examples/stacked-bar1/stacked-bar1.compo
 import { Bar3dComponent } from './examples/bar3d/bar3d.component';
 import { Pie1Component } from './examples/pie1/pie1.component';
 import { Mixed1Component } from './examples/mixed1/mixed1.component';
+import { Line4Component } from './examples/line4/line4.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { Mixed1Component } from './examples/mixed1/mixed1.component';
     Bar3dComponent,
     Pie1Component,
     Mixed1Component,
+    Line4Component,
   ],
   imports: [
     BrowserModule,

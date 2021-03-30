@@ -68,8 +68,9 @@ export class Area1Component implements OnInit {
     labels: this.labels,
     datasets: [
       {
-        rows: this.data
-      }]
+        rows: this.data,
+      }
+      ]
   };
 
   ngOnInit(): void {

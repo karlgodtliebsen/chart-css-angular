@@ -22,6 +22,13 @@ export interface Row {
   tooltip?: string;
 }
 
+export interface DataPoint {
+  x: number;
+  y: number;
+  data?: string | number;
+  tooltip?: string;
+}
+
 export interface Legend {
   color?: string;
   text: string;
@@ -38,7 +45,7 @@ export interface ChartDataSet {
   label?: string | Label;
   type?: ChartType;
   generateData?: boolean;
-  rows: Row[] | number[];
+  rows: Row[] | number[] | DataPoint[];
 }
 
 export interface ReversedDataSet {

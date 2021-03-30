@@ -1,6 +1,17 @@
 import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ChartBase} from './chart-base';
-import {ChartData, ChartOrientation, ChartType, Label, LabelAlignment, Legend, LegendShape, ReversedDataSet, Row} from './models';
+import {
+  ChartData, ChartDataSet,
+  ChartOrientation,
+  ChartType,
+  DataPoint,
+  Label,
+  LabelAlignment,
+  Legend,
+  LegendShape,
+  ReversedDataSet,
+  Row
+} from './models';
 
 
 @Component({
@@ -138,6 +149,31 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
     }
   }
 
+  getReverseMapped(): ReversedDataSet[] {
+    const rowsCollection: ReversedDataSet[] = [];
+    if (this.chartData.datasets && this.chartData.datasets.length > 0) {
+      const nbOfRows = this.chartData.datasets[0].rows.length;
+
+      for (let row = 0; row < nbOfRows; row++) {
+        const rows: Row[] = [];
+        let label: any = {text: ''};
+        if (this.chartData.labels && this.chartData.labels.length > row) {
+          label = this.chartData.labels[row];
+        }
+        rowsCollection.push({rows, label});
+      }
+      for (let row = 0; row < nbOfRows; row++) {
+        const rows = rowsCollection[row].rows;
+        // tslint:disable-next-line:prefer-for-of
+        for (let ds = 0; ds < this.chartData.datasets.length; ds++) {
+          const r: any = this.chartData.datasets[ds].rows[row];
+          rows.push(r);
+        }
+      }
+    }
+    return rowsCollection;
+  }
+
   private initialize(): void {
     if (this.height) {
       window.document.documentElement.style.setProperty('--chart-height', this.height);
@@ -165,36 +201,11 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
       this.mixed = true;
     }
 
-    this.height = '200px';
-
+    this.convertDataToRowData();
     this.adjustLegends();
     this.adjustLabels();
-    this.adjustRowDataAndFindMax();
-  }
-
-  getReverseMapped(): ReversedDataSet[] {
-    const rowsCollection: ReversedDataSet[] = [];
-    if (this.chartData.datasets && this.chartData.datasets.length > 0) {
-      const nbOfRows = this.chartData.datasets[0].rows.length;
-
-      for (let row = 0; row < nbOfRows; row++) {
-        const rows: Row[] = [];
-        let label: any = {text: ''};
-        if (this.chartData.labels && this.chartData.labels.length > row) {
-          label = this.chartData.labels[row];
-        }
-        rowsCollection.push({rows, label});
-      }
-      for (let row = 0; row < nbOfRows; row++) {
-        const rows = rowsCollection[row].rows;
-        // tslint:disable-next-line:prefer-for-of
-        for (let ds = 0; ds < this.chartData.datasets.length; ds++) {
-          const r: any = this.chartData.datasets[ds].rows[row];
-          rows.push(r);
-        }
-      }
-    }
-    return rowsCollection;
+    this.adjustRowData();
+    this.findMax();
   }
 
   private createChartData(): ChartData {
@@ -222,24 +233,41 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
     }
   }
 
-  private isRowArray(data: Row[] | number[]): data is Row[] {
-    return (Array.isArray(data)) && (data as Row[]).length !== undefined;
+  private isRowElement(data: any): boolean {
+    return  (data as any).value !== undefined;
   }
 
-  private isNumberArray(data: Row[] | number[]): data is number[] {
-    return (Array.isArray(data)) && (data as number[]).length !== undefined;
+  private isDatapoint(data: any): boolean {
+    return (data as any).x !== undefined;
   }
 
-  private isRowElement(data: Row | number): data is Row {
-    return (data as Row).value !== undefined;
+  private isNumbers(data: any): boolean {
+    return typeof data === 'number';
   }
 
-  private convertRows(dataRows: any[]): Row[] {
+  private convertDatapointsToRows(dataSet: ChartDataSet): Row[] {
+    const dataPoints: DataPoint[] = dataSet.rows as DataPoint[];
+    const labels: string[] = [];
     let rows: Row[] = [];
-    if (dataRows.length === 0) {
+    if (dataPoints.length === 0) {
       return rows;
     }
-    dataRows.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false}));
+    dataPoints.forEach((r) => {
+      rows.push({value: r.y, start: 0.0, data: r.y.toString(), useDefaultColor: false});
+      labels.push( r.x.toString());
+    });
+    rows = this.setStartPositions(rows);
+    this.chartData.labels = labels;
+    return rows;
+  }
+
+  private convertNumbersToRows(dataSet: ChartDataSet): Row[] {
+    const numbers: number[] = dataSet.rows as number[];
+    let rows: Row[] = [];
+    if (numbers.length === 0) {
+      return rows;
+    }
+    numbers.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false}));
     rows = this.setStartPositions(rows);
     return rows;
   }
@@ -316,7 +344,7 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
     return legends;
   }
 
-  private adjustRowDataAndFindMax(): void {
+  private adjustRowData(): void {
     if (this.chartData.datasets && this.chartData.datasets.length > 0) {
       this.chartData.datasets.forEach((dataset) => {
           if (typeof dataset.label === 'string') {
@@ -324,9 +352,7 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
               text: dataset.label,
             };
           }
-          if (dataset.rows && dataset.rows.length > 0 && !this.isRowElement(dataset.rows[0])) {
-            dataset.rows = this.convertRows(dataset.rows);
-          } else if (dataset.rows && dataset.rows.length > 0) {
+          if (dataset.rows && dataset.rows.length > 0) {
             const rows: any = dataset.rows;
             dataset.rows = this.fillStartPositions(rows);
           }
@@ -336,19 +362,34 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
           }
         }
       );
-      this.findMax();
     }
   }
+  private convertDataToRowData(): void {
+    if (this.chartData.datasets && this.chartData.datasets.length > 0) {
+      this.chartData.datasets.forEach((dataset) => {
+          if (dataset.rows && dataset.rows.length > 0) {
+            if (this.isDatapoint(dataset.rows[0])) {
+              dataset.rows = this.convertDatapointsToRows(dataset);
+            }
+            else
+            if (this.isNumbers(dataset.rows[0])) {
+              dataset.rows = this.convertNumbersToRows(dataset);
+            }
+          }
+        }
+      );
+    }
+  }
+
 
   private findMax(): void {
     if (this.chartData.datasets.length > 0) {
       if (this.max === null && !this.chartData.max) {
         let m = Number.MIN_SAFE_INTEGER;
         this.chartData.datasets.forEach((dataset) => {
-            dataset.rows.forEach((r) => {
-              const a: any = r;
-              if (m < a.value) {
-                m = a.value;
+            dataset.rows.forEach((r: any) => {
+              if (m < r.value) {
+                m = r.value;
               }
             });
           }
