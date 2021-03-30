@@ -1,5 +1,6 @@
-<div id="{{chartId}}-container" class="chart-wrapper" *ngIf="chartData.datasets">
-  <ul *ngIf="chartData.legends !== undefined && chartData.legends.length > 0" class="charts-css legend" [ngClass]="legendClasses"
+<div id="{{chartId}}-container" #chartContainer class="chart-wrapper" *ngIf="chartData.datasets">
+  <ul *ngIf="chartData.legends !== undefined && chartData.legends.length > 0" class="charts-css legend"
+      [ngClass]="legendClasses"
       [class.legend-inline]="legendInline">
     <li *ngFor="let legend of chartData.legends" [style.color]="legend.color">{{legend.text}}</li>
   </ul>
@@ -12,26 +13,35 @@
 </div>
 
 <ng-template #mixedTemplate>
-  <table *ngFor="let dataset of chartData.datasets; let dataSetIndex = index" class="charts-css chart " [ngClass]="tableClasses"
-         [class.show-heading]="caption"
-         [class.show-data]="showData"
-         [class.show-data-on-hover]="showDataOnHover"
-         [class.show-data-axes]="showDataAxis"
-         [class.show-primary-axis]="showPrimaryAxis"
-         [class.show-labels]="showLabels"
-  >
-    <caption [ngClass]="captionStyle"> {{caption}} </caption>
-    <thead *ngIf="chartData.headers">
-    <tr>
-      <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
-    </tr>
-    </thead>
-    <ng-container *ngTemplateOutlet="singleDataSetTemplate; context: {$implicit: chartData, labels: chartData.labels, dataset: dataset}"></ng-container>
-  </table>
+  <div class="mixed">
+    <table *ngFor="let dataset of chartData.datasets; let dataSetIndex = index"
+           class="charts-css"
+           [ngClass]="dataset.type + ' ' + getMixed(dataSetIndex)"
+           [class.show-heading]="caption"
+           [class.show-data]="showData"
+           [class.show-data-on-hover]="showDataOnHover"
+           [class.show-data-axes]="showDataAxis"
+           [class.show-primary-axis]="showPrimaryAxis"
+           [class.show-labels]="showLabels"
+    >
+      <caption [ngClass]="captionStyle"> {{caption}} </caption>
+      <thead *ngIf="chartData.headers">
+      <tr>
+        <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
+      </tr>
+      </thead>
+      <ng-container
+        *ngTemplateOutlet="singleDataSetTemplate; context: {$implicit: chartData, labels: chartData.labels, dataset: dataset}"></ng-container>
+    </table>
+    <div class="primary-axis"> Primary Axis Title </div>
+    <div class="data-1-axis"> Stock Price </div>
+    <div class="data-2-axis"> Moving Average </div>
+  </div>
 </ng-template>
 
+
 <ng-template #notMixedTemplate>
-  <table id="{{chartId}}" class="charts-css chart " [ngClass]="tableClasses"
+  <table id="{{chartId}}" class="charts-css chart " [ngClass]="typeClass + ' ' + tableClasses"
          [class.show-heading]="caption"
          [class.show-data]="showData"
          [class.show-data-on-hover]="showDataOnHover"
@@ -45,8 +55,9 @@
       <th *ngFor="let header of chartData.headers" scope="col"> {{header}} </th>
     </tr>
     </thead>
-    <ng-container *ngIf="!multiple && chartData.datasets.length === 1" >
-       <ng-container *ngTemplateOutlet="singleDataSetTemplate; context: {$implicit: chartData, labels: chartData.labels, dataset: chartData.datasets[0]}" ></ng-container>
+    <ng-container *ngIf="!multiple && chartData.datasets.length === 1">
+      <ng-container
+        *ngTemplateOutlet="singleDataSetTemplate; context: {$implicit: chartData, labels: chartData.labels, dataset: chartData.datasets[0]}"></ng-container>
     </ng-container>
     <ng-container *ngIf="multiple && overlay">
       <ng-container *ngTemplateOutlet="multipleOverlayDataSetTemplate"></ng-container>
@@ -56,40 +67,29 @@
     </ng-container>
   </table>
 </ng-template>
-
-<ng-template #singleDataSetTemplate let-dataset="dataset" let-labels="labels" >
+<ng-template #singleDataSetTemplate let-dataset="dataset" let-labels="labels">
   <tbody>
-    <tr *ngFor="let row of dataset.rows; let rowIndex = index">
-      <th *ngIf="labels && labels.length > 0"
-          scope="row"
-          class="labels-cell"
-          [class.hide-label]="labels[rowIndex].hide"
-          [ngClass]="labels[rowIndex].class">
-        {{labels[rowIndex].text}}
-        <div *ngIf="labels[rowIndex].subClass" [ngClass]="labels[rowIndex].subClass"></div>
-      </th>
+  <tr *ngFor="let row of dataset.rows; let rowIndex = index">
+    <th *ngIf="labels && labels.length > 0"
+        scope="row"
+        class="labels-cell"
+        [class.hide-label]="labels[rowIndex].hide"
+        [ngClass]="labels[rowIndex].class">
+      {{labels[rowIndex].text}}
+      <div *ngIf="labels[rowIndex].subClass" [ngClass]="labels[rowIndex].subClass"></div>
+    </th>
 
-      <th *ngIf="dataset.label  && labels.length > rowIndex"
-          scope="row"
-          class="labels-cell"
-          [class.hide-label]="chartData.labels[rowIndex].hide"
-          [ngClass]="dataset.label.class"> {{dataset.label.text}}
-      </th>
-
-      <td
-        [style.color]="row.datacolor"
-        [style.--size]="getSize( row, max, dataset.rows )"
-        [style.--color]="getColor(chartData, row, rowIndex)"
-        [style.--start]="getStart( row , max)"
-      >
-        <span *ngIf="row.data" class="data">{{row.data}} </span>
-        <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
-      </td>
-
-    </tr>
+    <th *ngIf="dataset.label  && labels.length > rowIndex"
+        scope="row"
+        class="labels-cell"
+        [class.hide-label]="chartData.labels[rowIndex].hide"
+        [ngClass]="dataset.label.class"> {{dataset.label.text}}
+    </th>
+    <ng-container
+      *ngTemplateOutlet="cellTemplate;  context: {$implicit: dataset.rows, row: row, rowIndex: rowIndex}"></ng-container>
+  </tr>
   </tbody>
 </ng-template>
-
 <ng-template #multipleSideBySideDataSetTemplate>
   <tbody>
   <tr *ngFor="let dataset of chartData.datasets; let dataSetIndex = index">
@@ -109,19 +109,12 @@
         [class.hide-label]="dataset.label.hide"
         [ngClass]="dataset.label.class"> {{dataset.label.text}}
     </th>
-
-    <td *ngFor="let row of dataset.rows; let r = index"
-        [style.color]="row.datacolor"
-        [style.--size]="getSize( row , max, dataset.rows)"
-        [style.--color]="getColor(chartData, row, dataSetIndex)"
-        [style.--start]="getStart( row, max )">
-      <span *ngIf="row.data" class="data">{{row.data}} </span>
-      <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
-    </td>
+    <ng-container *ngFor="let row of dataset.rows; let rowIndex = index">
+      <ng-container
+        *ngTemplateOutlet="cellTemplate;  context: {$implicit: dataset.rows, row: row, rowIndex: rowIndex}"></ng-container>
+    </ng-container>
   </tr>
   </tbody>
-
-
 </ng-template>
 <ng-template #multipleOverlayDataSetTemplate>
   <tbody>
@@ -133,16 +126,21 @@
         [ngClass]="rowsCollection.label.class"> {{rowsCollection.label.text}}
     </th>
     <ng-container *ngFor="let row of rowsCollection.rows; let dataSetIndex = index;">
-      <td
-        [style.color]="row.datacolor"
-        [style.--size]="getSize( row, max, rowsCollection.rows )"
-        [style.--color]="getColor(chartData, row, dataSetIndex)"
-        [style.--start]="getStart( row, max )"
-      >
-        <span *ngIf="row.data" class="data">{{row.data}} </span>
-        <span *ngIf="row.tooltip" class="tooltip"> {{row.tooltip}} </span>
-      </td>
+      <ng-container
+        *ngTemplateOutlet="cellTemplate;  context: {$implicit: rowsCollection.rows, row: row, rowIndex: rowIndex}"></ng-container>
     </ng-container>
   </tr>
   </tbody>
+</ng-template>
+
+<ng-template #cellTemplate let-row="row" let-rows let-rowIndex="rowIndex">
+  <td
+    [style.color]="row.datacolor"
+    [style.--size]="getSize( row, max, rows )"
+    [style.--color]="getColor(chartData, row, rowIndex)"
+    [style.--start]="getStart( row , max)"
+  >
+    <span *ngIf="(showData) && row.data" class="data">{{row.data}} </span>
+    <span *ngIf="(showDataOnHover) && row.tooltip" class="tooltip"> {{row.tooltip}} </span>
+  </td>
 </ng-template>

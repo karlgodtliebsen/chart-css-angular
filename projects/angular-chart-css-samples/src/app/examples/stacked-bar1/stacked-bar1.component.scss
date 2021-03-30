@@ -1,7 +1,7 @@
 #stacked-bar-1,
 #percentage-stacked-bar-1 {
   height: 250px;
-  max-width: 600px;
+  max-width: 100%; //600px;
   margin: 0 auto;
   --heading-size: 2.5rem;
   --color-1: rgba(255, 200, 0, 0.6);

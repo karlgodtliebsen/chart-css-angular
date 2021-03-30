@@ -1,0 +1,91 @@
+
+// mixed section
+/*
+.mixed {
+  position: relative;
+  height: 450px;
+  width: 100%;
+  //max-width: 600px;
+  margin: 0 auto;
+  background-color: #eee;
+}
+.mixed > table {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.mixed > table.column {
+  top: unset;
+  height: 35px;
+}
+
+.mixed > table.area {
+  --color: linear-gradient(#000, #fff);
+}
+.mixed > table.line {
+  --color: #fc1;
+}
+.mixed > table.column tr:nth-child(even) {
+  --color: #e88;
+}
+.mixed > table.column tr:nth-child(odd) {
+  --color: #8c8;
+}
+*/
+
+
+.mixed {
+  --chart-width: 100%;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  grid-template-columns: var(--chart-grid-template-columns);
+  grid-template-rows: var(--chart-grid-template-rows);
+  grid-template-areas: var(--chart-grid-template-areas);
+  width: var(--chart-width);
+  height: calc(var(--chart-height) + 50px);
+}
+
+.mixed > table.area,
+.mixed > table.line {
+  grid-area: stocks;
+}
+
+.mixed > table.column {
+  grid-area: volume;
+}
+
+.mixed > table.area,
+.mixed > table.line,
+.mixed > table.column {
+  // display: none;
+}
+
+.mixed > .primary-axis {
+  grid-area: primary-axis;
+}
+
+.mixed > .data-1-axis {
+  grid-area: data-1-axis;
+  writing-mode: tb-rl;
+  transform: rotateZ(180deg);
+}
+.mixed > .data-2-axis {
+  grid-area: data-2-axis;
+  writing-mode: tb-rl;
+}
+.mixed > table.area {
+  --color: linear-gradient(#666, rgba(255, 255, 255, 0));
+}
+.mixed > table.line {
+  --color: #fc1;
+}
+.mixed > table.column tr:nth-child(even) {
+  --color: #e88;
+}
+.mixed > table.column tr:nth-child(odd) {
+  --color: #8c8;
+}
+

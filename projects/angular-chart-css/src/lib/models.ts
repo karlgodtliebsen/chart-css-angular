@@ -18,7 +18,7 @@ export interface Row {
   color?: string;
   value: number;
   start?: number;
-  data?: string;
+  data?: string | number;
   tooltip?: string;
 }
 
@@ -36,6 +36,8 @@ export interface Label {
 
 export interface ChartDataSet {
   label?: string | Label;
+  type?: ChartType;
+  generateData?: boolean;
   rows: Row[] | number[];
 }
 

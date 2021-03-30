@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ChartBase} from './chart-base';
 import {ChartData, ChartOrientation, ChartType, Label, LabelAlignment, Legend, LegendShape, ReversedDataSet, Row} from './models';
 
@@ -7,12 +7,11 @@ import {ChartData, ChartOrientation, ChartType, Label, LabelAlignment, Legend, L
   // tslint:disable-next-line:component-selector
   selector: 'chart-css',
   templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.scss'],
+  styleUrls: ['./chart.component.scss', './pie.scss', './mixed.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ChartComponent extends ChartBase implements OnInit {
-  @Input()
-  type: ChartType;
+export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
+  @Input() type: ChartType;
 
   // caption
   @Input() caption: string;
@@ -20,6 +19,9 @@ export class ChartComponent extends ChartBase implements OnInit {
   // styling
   @Input() legendStyle: string;
   @Input() captionStyle: string;
+
+  @Input() height: string;
+  @Input() width: string;
 
   @Input() chartId: string;
   @Input() showData = false;
@@ -49,7 +51,10 @@ export class ChartComponent extends ChartBase implements OnInit {
   @Input() chartData: ChartData;
   @Input() overlay = false;
   @Input() mixed = false;
+  @Input() mixedDirectives: string[] = [];
 
+//  @ViewChild('chartContainer', {read: ElementRef, static: false }) container!: ElementRef;
+  @ViewChild('chartContainer', {read: ElementRef}) container!: ElementRef;
 
   constructor() {
     super();
@@ -58,25 +63,9 @@ export class ChartComponent extends ChartBase implements OnInit {
     this.mixed = false;
     this.chartData = this.createChartData();
   }
-  public getSize(row: Row, max: number, rows?: Row[]): number {
-    if (!this.showPercentage)
-    {
-      return row.value / max;
-    }
-    if (rows)
-    {
-      let sum = 0.0;
-      rows.forEach((r)  => sum += r.value);
-      return row.value / sum;
-    }
-    return 0.0;
-  }
 
   get tableClasses(): string {
     const c: string[] = [];
-    if (Boolean(this.type)) {
-      c.push(this.type);
-    }
     if (Boolean(this.orientation)) {
       c.push(this.orientation);
     }
@@ -104,15 +93,58 @@ export class ChartComponent extends ChartBase implements OnInit {
     return c.join(' ');
   }
 
-  get legendClasses(): string {
-    const c: string[] = [];
-    if (Boolean(this.legendShape)) {
-      c.push(this.legendShape);
+  get typeClass(): string {
+    if (Boolean(this.type)) {
+      return this.type;
     }
-    return c.join(' ');
+    return '';
+  }
+
+  get legendClasses(): string {
+    if (Boolean(this.legendShape)) {
+      return this.legendShape;
+    }
+    return '';
+  }
+
+  public getSize(row: Row, max: number, rows?: Row[]): number {
+    if (!this.showPercentage) {
+      return row.value / max;
+    }
+    if (rows) {
+      let sum = 0.0;
+      rows.forEach((r) => sum += r.value);
+      return row.value / sum;
+    }
+    return 0.0;
+  }
+
+  public getMixed(index: number): string {
+//    window.document.documentElement.style.setProperty('--chart-grid-template-rows', '300px 50px 50px');
+    if (this.mixed && this.mixedDirectives.length > index) {
+      return this.mixedDirectives[index];
+    }
+    return '';
   }
 
   ngOnInit(): void {
+    this.initialize();
+  }
+
+  ngAfterViewInit(): void {
+    // setTimeout(() => this.initialize() );
+    if (this.mixed && this.mixedDirectives.length > 0) {
+      window.document.documentElement.style.setProperty('--chart-grid-template-rows', '300px 50px 50px');
+    }
+  }
+
+  private initialize(): void {
+    if (this.height) {
+      window.document.documentElement.style.setProperty('--chart-height', this.height);
+    }
+    if (this.width) {
+    }
+
     if (this.type === 'line') {
       this.dataSpacing = 0;
       this.showDataAxis = false;
@@ -133,10 +165,11 @@ export class ChartComponent extends ChartBase implements OnInit {
       this.mixed = true;
     }
 
+    this.height = '200px';
+
     this.adjustLegends();
     this.adjustLabels();
     this.adjustRowDataAndFindMax();
-
   }
 
   getReverseMapped(): ReversedDataSet[] {
@@ -209,6 +242,13 @@ export class ChartComponent extends ChartBase implements OnInit {
     dataRows.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false}));
     rows = this.setStartPositions(rows);
     return rows;
+  }
+
+  private setDataRows(dataRows: Row[]): Row[] {
+    if (dataRows.length === 0) {
+      return dataRows;
+    }
+    dataRows.forEach((row) => row.data = row.value.toString());
   }
 
   private setStartPositions(rows: Row[]): Row[] {
@@ -290,6 +330,10 @@ export class ChartComponent extends ChartBase implements OnInit {
             const rows: any = dataset.rows;
             dataset.rows = this.fillStartPositions(rows);
           }
+          if (Boolean(dataset.generateData)) {
+            const rws: any[] = dataset.rows;
+            this.setDataRows(rws);
+          }
         }
       );
       this.findMax();
@@ -317,4 +361,6 @@ export class ChartComponent extends ChartBase implements OnInit {
       }
     }
   }
+
+
 }
