@@ -140,6 +140,7 @@
     [style.--color]="getColor(chartData, row, rowIndex)"
     [style.--start]="getStart( row , max)"
   >
+    <span *ngIf="row.dot"class="dot"></span>
     <span *ngIf="(showData) && row.data" class="data">{{row.data}} </span>
     <span *ngIf="(showDataOnHover) && row.tooltip" class="tooltip"> {{row.tooltip}} </span>
   </td>

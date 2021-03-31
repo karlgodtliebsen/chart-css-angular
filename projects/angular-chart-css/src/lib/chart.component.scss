@@ -11,6 +11,7 @@
   --chart-legend-background-color: rgba(0, 0, 255, 0.1);
   --chart-background-color: rgba(255, 255, 255, 0.9);
   --chart-border-color: rgba(0, 0, 0, 0.9);
+  --chart-dot-color: rgba(0, 0, 0, 0.9);
   --chart-legend-height: 50px;
   --chart-height: 400px;
   --chart-width: 700px;
@@ -68,4 +69,14 @@
 
 .charts-css:not(legend){
   display: none;
+}
+
+.charts-css.line:not(.reverse):not(.reverse-data) tbody tr td .dot{
+  width: 5px;
+  height: 5px;
+  background-color: var(--chart-dot-color);
+  border-radius: 50%;
+  position: relative;
+  left: 3px;
+  top: 0;
 }

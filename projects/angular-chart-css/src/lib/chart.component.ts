@@ -34,6 +34,8 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
   @Input() height: string;
   @Input() width: string;
 
+  @Input() dots: boolean;
+
   @Input() chartId: string;
   @Input() showData = false;
   @Input() showDataOnHover = true;
@@ -253,7 +255,7 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
       return rows;
     }
     dataPoints.forEach((r) => {
-      rows.push({value: r.y, start: 0.0, data: r.y.toString(), useDefaultColor: false});
+      rows.push({value: r.y, start: 0.0, data: r.y.toString(), useDefaultColor: false, dot: this.dots});
       labels.push( r.x.toString());
     });
     rows = this.setStartPositions(rows);
@@ -267,7 +269,7 @@ export class ChartComponent extends ChartBase implements OnInit, AfterViewInit {
     if (numbers.length === 0) {
       return rows;
     }
-    numbers.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false}));
+    numbers.forEach((r) => rows.push({value: r, start: 0.0, data: r.toString(), useDefaultColor: false, dot: this.dots} ));
     rows = this.setStartPositions(rows);
     return rows;
   }

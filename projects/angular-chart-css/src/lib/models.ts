@@ -20,6 +20,7 @@ export interface Row {
   start?: number;
   data?: string | number;
   tooltip?: string;
+  dot?: boolean;
 }
 
 export interface DataPoint {
